@@ -1,0 +1,12 @@
+path: /Users/inmka/PycharmProjects/ObjectDetection49022/data
+train: /Users/inmka/PycharmProjects/ObjectDetection49022/data/train/images
+val: /Users/inmka/PycharmProjects/ObjectDetection49022/data/validation
+nc: 7
+names:
+- Resistor
+- IC
+- LED
+- Capacitor_G
+- Capacitor_Y
+- Capacitor_B
+- Transistor
