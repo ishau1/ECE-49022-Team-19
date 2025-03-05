@@ -171,3 +171,72 @@ def index_finder(array1, direction_determiner):
 #  Function that determines the distance between two points given their x and y coordinates
 def dist_determ(x_coord1, y_coord1, x_coord2, y_coord2):
     return math.sqrt((x_coord1 - x_coord2)**2 + (y_coord1-y_coord2)**2)
+
+
+
+def pixel_glare_color_determ(x_coord, y_coord, slope, orientation, color_array, image_array, distance_var, height1, width1):
+    distance_new_pixel_var = distance_var
+    if slope != 0:
+        new_slope = -slope
+    else:
+        new_slope = slope
+    if orientation:  # Resistor is more Vertical
+        new_coord_y1 = int(round(distance_new_pixel_var * new_slope + y_coord))
+        new_coord_y2 = int(round(-distance_new_pixel_var * new_slope + y_coord))
+        if new_coord_y1 < height1 and (x_coord + distance_new_pixel_var) < width1:
+            new_pixel_color1 = color_determ_color_chart_return(
+                    image_array[new_coord_y1][x_coord + distance_new_pixel_var][0],
+                    image_array[new_coord_y1][x_coord + distance_new_pixel_var][1],
+                    image_array[new_coord_y1][x_coord + distance_new_pixel_var][2])
+            new_pixel_color2 = color_determ_color_chart_return(
+                    image_array[new_coord_y2][x_coord - distance_new_pixel_var][0],
+                    image_array[new_coord_y2][x_coord - distance_new_pixel_var][1],
+                    image_array[new_coord_y2][x_coord - distance_new_pixel_var][2])
+        else:
+            new_pixel_color1 = 11
+            new_pixel_color2 = color_determ_color_chart_return(
+                    image_array[new_coord_y2][x_coord - distance_new_pixel_var][0],
+                    image_array[new_coord_y2][x_coord - distance_new_pixel_var][1],
+                    image_array[new_coord_y2][x_coord - distance_new_pixel_var][2])
+        image_array[new_coord_y1][x_coord + distance_new_pixel_var][0] = 255
+        image_array[new_coord_y2][x_coord - distance_new_pixel_var][0] = 255
+        print(new_coord_y1, x_coord + distance_new_pixel_var, new_pixel_color1, distance_var, 1, "V")
+        print(new_coord_y2, x_coord - distance_new_pixel_var, new_pixel_color2, distance_var, 2, "V")
+    else: # Resistor is more Horizontal
+        new_coord_x1 = int(round(distance_new_pixel_var * new_slope + x_coord))
+        new_coord_x2 = int(round(-distance_new_pixel_var * new_slope + x_coord))
+        if new_coord_x1 < width1 and (y_coord + distance_new_pixel_var) < height1:
+            new_pixel_color1 = color_determ_color_chart_return(
+                    image_array[y_coord + distance_new_pixel_var][new_coord_x1][0],
+                    image_array[y_coord + distance_new_pixel_var][new_coord_x1][1],
+                    image_array[y_coord + distance_new_pixel_var][new_coord_x1][2])
+            new_pixel_color2 = color_determ_color_chart_return(
+                    image_array[y_coord - distance_new_pixel_var][new_coord_x2][0],
+                    image_array[y_coord - distance_new_pixel_var][new_coord_x2][1],
+                    image_array[y_coord - distance_new_pixel_var][new_coord_x2][2])
+        else:
+            new_pixel_color1 = 11
+            new_pixel_color2 = color_determ_color_chart_return(
+                    image_array[y_coord - distance_new_pixel_var][new_coord_x2][0],
+                    image_array[y_coord - distance_new_pixel_var][new_coord_x2][1],
+                    image_array[y_coord - distance_new_pixel_var][new_coord_x2][2])
+        image_array[y_coord + distance_new_pixel_var][new_coord_x1][0] = 255
+        image_array[y_coord - distance_new_pixel_var][new_coord_x2][0] = 255
+        print(y_coord + distance_new_pixel_var, new_coord_x1, new_pixel_color1, distance_var, 1, "H")
+        print(y_coord - distance_new_pixel_var, new_coord_x2, new_pixel_color2, distance_var, 2, "H")
+    if new_pixel_color1 == new_pixel_color2 and new_pixel_color1 != 11:
+        color_array[-1] = new_pixel_color1
+    elif new_pixel_color1 == 11 and new_pixel_color2 == 11:
+        pixel_glare_color_determ(x_coord, y_coord, slope, orientation, color_array, image_array, distance_var + 2, height1, width1)
+    elif new_pixel_color1 == 11 and new_pixel_color2 != 11:
+        color_array[-1] = new_pixel_color2
+    elif new_pixel_color1 != 11 and new_pixel_color2 == 11:
+        color_array[-1] = new_pixel_color1
+    elif new_pixel_color1 == 12 and new_pixel_color2 != 12:
+        color_array[-1] = new_pixel_color2
+    elif new_pixel_color1 != 12 and new_pixel_color2 == 12:
+        color_array[-1] = new_pixel_color1
+    else:
+        color_array[-1] = new_pixel_color2
+    return None
+
