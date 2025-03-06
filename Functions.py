@@ -37,32 +37,35 @@ def color_determ_color_chart_return(red, green, blue):
         return 11
     elif red >= 90 and green >= 90 and blue >= 90 and sum1 >= 320:
         return 11
-    elif (red - green) >= 35 and (red - blue) >= 35 and (red <= 160 and green <= 75) and abs(green - blue) <= 20 and red >= 50:  #Determines Red
+    elif (red - green) >= 25 and (red - blue) >= 25 and (red <= 160 and green <= 75) and abs(green - blue) <= 20 and red >= 40:  #Determines Red
         return 2
     elif blue >= 160 and green >= 100:  #Determines Resistor Background Color Light Blue
         return 12
     elif sum1 <= 25:
-        return 0
+        if red >= 5*green and red >= 5*blue:
+            return 1
+        else:
+            return 0
     elif sum1 < 180 and abs(red - blue) <= 15 and abs(red - green) <= 15:  #Determines Black
         return 0
     elif sum1 < 190 and red >= 40 and red - green >= 0 and red - blue >= 0:  #Determines Brown
         return 1
     elif (red >= green + 20) and (blue + 20 <= red) and red <= 80:  #Determines Brown
         return 1
-    elif red - green >= 40 and (green - blue >= 25) and 75 >= blue:  #Determines Orange
+    elif red - green >= 15 and (green - blue >= 20) and (red - blue >= 40) and red >= 75:  #Determines Orange
         return 3
     elif (green - red) >= 25 and (green - blue) >= 80:  #Determines Yellow
         return 4
-    elif ((green - red) >= 60 and (green - blue) >= 40 and blue <= 75) or (green >= 3*red and green >= blue):  #Determines Green
+    elif ((green - red) >= 60 and (green - blue) >= 40 and blue <= 75) or (green >= 3*red and green >= 2*blue and green >= 40):  #Determines Green
         return 5
-    elif ((blue - red) >= 120 and (blue - green) >= 65 and blue <= 150) or (blue >= 5*red and green <= 40 and blue >= 70 and blue <= 150):  #Determines Blue
+    elif blue >= 4*red and green <= 40 and blue >= 70 and blue <= 150:  #Determines Blue
         return 6
     elif green <= (blue - 20) and red <= (blue - 20) and abs(green - red) <= 25:  #Determines Purple
         return 7
 
 
     #  Determines Gray
-    elif abs(red - blue) <= 15 and abs(red - green) <= 15 and abs(blue - green) <= 15 and sum1 >= 175:
+    elif abs(red - blue) <= 25 and abs(red - green) <= 25 and abs(blue - green) <= 25 and sum1 >= 125:
         return 8
     else:  #Determines pixel color to be none of the above
         return 12
