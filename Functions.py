@@ -56,9 +56,9 @@ def color_determ_color_chart_return(red, green, blue):
         return 3
     elif (green - red) >= 25 and (green - blue) >= 80:  #Determines Yellow
         return 4
-    elif ((green - red) >= 60 and (green - blue) >= 40 and blue <= 75) or (green >= 3*red and green >= 2*blue and green >= 40):  #Determines Green
+    elif green >= 3*red and green >= 2*blue and green >= 40 or (green - red >= 25 and green - blue >= 25 and green >= 40):  #Determines Green
         return 5
-    elif blue >= 4*red and green <= 40 and blue >= 70 and blue <= 150:  #Determines Blue
+    elif blue >= 4*red and green <= 40 and blue >= 80 and blue <= 150 and blue + red > 10:  #Determines Blue
         return 6
     elif green <= (blue - 20) and red <= (blue - 20) and abs(green - red) <= 25:  #Determines Purple
         return 7
@@ -99,10 +99,8 @@ def color_determ_hsv(hue, saturation, value):
 
 #  Function to determine which bin the resistor is to be sent to
 def bin_determ(band_array):
-    if not band_array:  #Checks if array is empty
+    if len(band_array) < 3 :  #Checks if array is empty
         return 7  #Integer to let microprocessor know the no bin was determined
-    elif (band_array[0] == 1 and band_array[1] == 0 and band_array[2] == 0) or (band_array[-1] == 1 and band_array[-2] == 0 and band_array[-3] == 0):
-        return 8
     elif band_array[0] == 2 and band_array[1] == 2 or band_array[-1] == 2 and band_array[-2] == 2:  #Send to bin 3
         return 10
     elif band_array[0] == 3 and band_array[1] == 3 or band_array[-1] == 3 and band_array[-2] == 3:  #Send to bin 4
@@ -117,6 +115,8 @@ def bin_determ(band_array):
         return 15
     elif band_array[0] == 1 and band_array[1] == 5 or band_array[-1] == 1 and band_array[-2] == 5:  #Send to bin 2
         return 9
+    elif (band_array[0] == 1 and band_array[1] == 0 and band_array[2] == 0) or (band_array[-1] == 1 and band_array[-2] == 0 and band_array[-3] == 0):
+        return 8
     else:
         return 7  #Integer to let microprocessor know the no bin was determined
 
