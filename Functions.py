@@ -33,7 +33,7 @@ def color_determ_color_chart_return(red, green, blue):
     sum1 = red + green + blue
     if sum1 >= 650:
         return 13
-    elif sum1 >= 450:
+    elif sum1 >= 450 and red >= 50 and green >= 50 and blue >= 50:
         return 11
     elif red >= 90 and green >= 90 and blue >= 90 and sum1 >= 320:
         return 11
@@ -42,7 +42,7 @@ def color_determ_color_chart_return(red, green, blue):
     elif blue >= 160 and green >= 100:  #Determines Resistor Background Color Light Blue
         return 12
     elif sum1 <= 25:
-        if red >= 5*green and red >= 5*blue:
+        if (red >= 5*green and red >= 5*blue) or (red - green >= 5 and red - blue >= 5):
             return 1
         else:
             return 0
@@ -58,14 +58,14 @@ def color_determ_color_chart_return(red, green, blue):
         return 4
     elif green >= 3*red and green >= 2*blue and green >= 40 or (green - red >= 25 and green - blue >= 25 and green >= 40):  #Determines Green
         return 5
-    elif blue >= 4*red and green <= 40 and blue >= 80 and blue <= 150 and blue + red > 10:  #Determines Blue
+    elif blue >= 4*red and green <= 40 and blue >= 80 and blue <= 140 and blue + red > 10:  #Determines Blue
         return 6
     elif green <= (blue - 20) and red <= (blue - 20) and abs(green - red) <= 25:  #Determines Purple
         return 7
-
-
     #  Determines Gray
-    elif abs(red - blue) <= 25 and abs(red - green) <= 25 and abs(blue - green) <= 25 and sum1 >= 125:
+    elif abs(red - blue) <= 25 and abs(red - green) <= 25 and abs(blue - green) <= 25 and sum1 >= 105:
+        return 8
+    elif sum1 >= 75 and abs(red - blue) <= 15 and abs(red - green) <= 15 and abs(blue - green) <= 15 and green > red:
         return 8
     else:  #Determines pixel color to be none of the above
         return 12
