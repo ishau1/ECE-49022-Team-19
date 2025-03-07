@@ -90,16 +90,17 @@ if __name__ == '__main__':
     """
 
     end_time = time.time()  #End time variable
+    total_time = end_time - start_time
+    print("The total completion time is", total_time, "seconds")  #Displays time taken for program to run
 
-    print(end_time - start_time)  #Displays time taken for program to run
+    bin_number = Fun1.bin_determ(color_array_color_chart_bands_only)
+    print("The bin number is", bin_number)
+
     plt.imshow(image_array, cmap='gray')
     #plt.imshow(hsv_image, cmap='gray')
     #plt.imshow(color_array, cmap='gray')
 
     plt.show()
-
-    bin_number = Fun1.bin_determ(color_array_color_chart_bands_only)
-    print("The bin number is", bin_number)
 
     #plt.imshow(color_array, cmap='gray')
     #plt.show()
