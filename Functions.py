@@ -41,14 +41,14 @@ def color_determ_color_chart_return(red, green, blue):
         return 2
     elif blue >= 160 and green >= 100:  #Determines Resistor Background Color Light Blue
         return 12
-    elif sum1 <= 25:
+    elif sum1 <= 40:
         if (red >= 5*green and red >= 5*blue) or (red - green >= 5 and red - blue >= 5):
             return 1
         else:
             return 0
-    elif sum1 < 180 and abs(red - blue) <= 15 and abs(red - green) <= 15:  #Determines Black
+    elif sum1 < 100 and abs(red - blue) <= 15 and abs(red - green) <= 15:  #Determines Black
         return 0
-    elif sum1 < 190 and red >= 40 and red - green >= 0 and red - blue >= 0:  #Determines Brown
+    elif sum1 < 100 and red >= 40 and red - green >= 0 and red - blue >= 0:  #Determines Brown
         return 1
     elif (red >= green + 20) and (blue + 20 <= red) and red <= 80:  #Determines Brown
         return 1
@@ -58,9 +58,9 @@ def color_determ_color_chart_return(red, green, blue):
         return 4
     elif green >= 3*red and green >= 2*blue and green >= 40 or (green - red >= 25 and green - blue >= 25 and green >= 40):  #Determines Green
         return 5
-    elif blue >= 4*red and green <= 40 and blue >= 80 and blue <= 140 and blue + red > 10:  #Determines Blue
+    elif blue >= 4*red and green <= 60 and blue >= 80 and blue <= 150 and blue + red > 10:  #Determines Blue
         return 6
-    elif green <= (blue - 20) and red <= (blue - 20) and abs(green - red) <= 25:  #Determines Purple
+    elif green <= (blue - 20) and red <= (blue - 20) and abs(green - red) <= 25 and green <= 50:  #Determines Purple
         return 7
     #  Determines Gray
     elif abs(red - blue) <= 25 and abs(red - green) <= 25 and abs(blue - green) <= 25 and sum1 >= 105:
@@ -427,7 +427,7 @@ def color_array_line_plotter(slope1, y_int1, x_coord1, y_coord1, x_coord2, y_coo
                 image_array1[starter_index1][starter_index2][1],
                 image_array1[starter_index1][starter_index2][2]))
 
-            if color_array1[-1] == 11:
+            if color_array1[-1] == 11 or color_array1[-1] == 8 or color_array1[-1] == 2:
                 pixel_glare_color_determ(starter_index2, starter_index1, slope1, orientation3, color_array1,
                                               image_array1, 6, dimensions1[0], dimensions1[1])
 
@@ -451,7 +451,7 @@ def color_array_line_plotter(slope1, y_int1, x_coord1, y_coord1, x_coord2, y_coo
                 image_array1[starter_index2][starter_index1][1],
                 image_array1[starter_index2][starter_index1][2]))
 
-            if color_array1[-1] == 11:
+            if color_array1[-1] == 11 or color_array1[-1] == 8 or color_array1[-1] == 2:
                 pixel_glare_color_determ(starter_index1, starter_index2, slope1, orientation3, color_array1,
                                               image_array1, 4, dimensions1[0], dimensions1[1])
 
