@@ -27,6 +27,8 @@ int servoPin_gripper = 14;
 
 int LED_Shine = 18;
 
+int type_Int;
+
 void setup() {
   
 	// Allow allocation of all timers
@@ -57,7 +59,6 @@ void setup() {
   delay(1000);
   Serial.println("ESP32 Serial Communication Started");
 
-  
   //Set Initial Position
   SetInitialPos();
   delay(1000);
@@ -130,7 +131,6 @@ void setup() {
   // Type 6
   //        Base   Elbow   Arm   Wrist  Gripper  
   write_Pos(5,130, 15,45, 140,110, 80,200, 0,0);  // grasp position -> bin position 3
-
   write_Pos_Back(130,5, 45,15, 110,140, 200,80, 0,0);  // bin position 3 -> grasp position
 
  // Set LED Pin output
@@ -138,19 +138,27 @@ void setup() {
 }
 
 void loop(){
-  //begin moving
-  digitalWrite(LED_Shine, HIGH);   // turn the LED on (HIGH is the voltage level)
-  delay(1000);                       // wait for a second
-  digitalWrite(LED_Shine, LOW);    // turn the LED off by making the voltage LOW
-  delay(1000);                       // wait for a second
 
 
-  int type = 1;
-  //grab_Pos();
-  // move_arm(type);
+  if (Serial.available() > 0) {
+    String type_1  = Serial.readStringUntil('\n');  // Input type of component
+    type_Int = type_1.toInt();                      // Convert input to INT type
 
-  delay(3000);
+  if(type_Int <= 0 | type_Int > 14) {
+    Serial.print("Not a valid type number");
+  } else {
+    Serial.print("Begin to move with Type: ");
+    Serial.print(type_Int);
+    //begin moving
+    digitalWrite(LED_Shine, HIGH);   // turn the LED on (HIGH is the voltage level)
+    delay(1000);                     // wait for a second
+    digitalWrite(LED_Shine, LOW);    // turn the LED off by making the voltage LOW
+    delay(1000);                     // wait for a second
 
+    move_arm(type_Int);
+  }
+    
+}
 }
 
 
@@ -162,16 +170,7 @@ void move_arm(int type) {
      case 1:
       write_Pos(5,45, 15,50, 140,140, 90,0, 0,0);
       break;
-  //   myservo_elbow.write(80);  
-  //   delay(100);
-  //   myservo_arm.write(120);   
-  //   delay(100);
-  //   myservo_base.write(45);    
-  //   delay(100);
-  //   myservo_wrist.write(50);  
-  //   delay(1000);
   }
-  // grab_Pos();    // Set to the grap position
 
 }
 
@@ -356,7 +355,7 @@ void SetInitialPos(){
   delay(50);
   myservo_wrist.write(80);  //Initial Pos of Wrist is 80 degree
   delay(50);
-  myservo_gripper.write(0);
+  myservo_gripper.write(50);
   delay(50);
 }
 
