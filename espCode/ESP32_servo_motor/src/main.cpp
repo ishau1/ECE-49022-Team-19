@@ -5,7 +5,6 @@
 void SetInitialPos();
 void move_arm(int type);
 void grab_Pos();
-void write_pos(int, int, int, int, int); // This is the Simple one
 void write_Pos(int, int, int, int, int, int, int, int, int, int); // The Complex one for movements
 void write_Pos_Back(int, int, int, int, int, int, int, int, int, int); // The Complex one for movements back
 
@@ -62,6 +61,8 @@ void setup() {
   //Set Initial Position
   SetInitialPos();
   delay(1000);
+  write_Pos(5,5, 70,15, 100,140, 80,80, 0,0);  // initialized position -> grasp position
+  
 
 /*  
   //Check Base
@@ -95,10 +96,9 @@ void setup() {
 	}  
 */
   
+/*
   // Type 1
   //        Base   Elbow   Arm   Wrist  Gripper
-  write_Pos(5,5, 70,15, 100,140, 80,80, 0,0);  // initialized position -> grasp position
-  
   write_Pos(5,58, 15,65, 140,110, 80,200, 0,0);  // grasp position -> bin position 1
   
   write_Pos_Back(58,5, 65,15, 110,140, 200,80, 0,0);  // bin position 1 -> grasp position
@@ -135,45 +135,80 @@ void setup() {
 
  // Set LED Pin output
  pinMode(LED_Shine, OUTPUT);
+
+ */
+
 }
 
 void loop(){
-
 
   if (Serial.available() > 0) {
     String type_1  = Serial.readStringUntil('\n');  // Input type of component
     type_Int = type_1.toInt();                      // Convert input to INT type
 
-  if(type_Int <= 0 | type_Int > 14) {
-    Serial.print("Not a valid type number");
-  } else {
-    Serial.print("Begin to move with Type: ");
-    Serial.print(type_Int);
-    //begin moving
-    digitalWrite(LED_Shine, HIGH);   // turn the LED on (HIGH is the voltage level)
-    delay(1000);                     // wait for a second
-    digitalWrite(LED_Shine, LOW);    // turn the LED off by making the voltage LOW
-    delay(1000);                     // wait for a second
-
-    move_arm(type_Int);
-  }
+    if(type_Int <= 0 | type_Int > 14) {
+      Serial.print("Not a valid type number");
+    } else {
+      Serial.print("Begin to move with Type: ");
+      Serial.print(type_Int);
     
-}
+      //begin moving
+      digitalWrite(LED_Shine, HIGH);   // turn the LED on (HIGH is the voltage level)
+      delay(1000);                     // wait for a second
+      digitalWrite(LED_Shine, LOW);    // turn the LED off by making the voltage LOW
+      delay(1000);                     // wait for a second
+
+      move_arm(type_Int);
+    }
+  }
 }
 
-
+// Move the arm to target location 
+// INPUT: int type -- The type of the component 
 void move_arm(int type) {
-  grab_Pos();    // Set to the grap position
 
-  delay(3000);
+  // delay(1000);
   switch(type){
-     case 1:
-      write_Pos(5,45, 15,50, 140,140, 90,0, 0,0);
-      break;
+    case 1:
+      //        Base   Elbow   Arm   Wrist  Gripper
+      write_Pos(5,58, 15,45, 140,110, 80,200, 0,0);  // grasp position -> bin position 1
+      write_Pos_Back(58,5, 45,15, 110,140, 200,80, 0,0);  // bin position 1 -> grasp position
+    break;
+
+    case 2: 
+    //        Base   Elbow   Arm   Wrist  Gripper  
+    write_Pos(5,70, 15,45, 140,110, 80,200, 0,0);  // grasp position -> bin position 2
+    write_Pos_Back(70,5, 45,15, 110,140, 200,80, 0,0);  // bin position 2 -> grasp position
+    break;
+
+    case 3:
+    //        Base   Elbow   Arm   Wrist  Gripper  
+    write_Pos(5,85, 15,45, 140,110, 80,200, 0,0);  // grasp position -> bin position 3
+    write_Pos_Back(85,5, 45,15, 110,140, 200,80, 0,0);  // bin position 3 -> grasp position
+    break;
+
+    case 4:
+    write_Pos(5,100, 15,45, 140,110, 80,200, 0,0);  // grasp position -> bin position 3
+    write_Pos_Back(100,5, 45,15, 110,140, 200,80, 0,0);  // bin position 3 -> grasp position
+    break;
+
+    case 5:
+    //        Base   Elbow   Arm   Wrist  Gripper
+    write_Pos(5,115, 15,45, 140,110, 80,200, 0,0);  // grasp position -> bin position 3
+    write_Pos_Back(115,5, 45,15, 100,140, 200,80, 0,0);  // bin position 3 -> grasp position
+    break;
+
+    case 6:
+    write_Pos(5,130, 15,45, 140,110, 80,200, 0,0);  // grasp position -> bin position 3
+    write_Pos_Back(130,5, 45,15, 110,140, 200,80, 0,0);  // bin position 3 -> grasp position  
+    break;
+    
+    // Set LED Pin output
+    pinMode(LED_Shine, OUTPUT);
   }
 
 }
-
+                       
 void write_Pos(int base_pos_1, int base_pos_2,int elbow_pos_1,int elbow_pos_2,
                int arm_pos_1, int arm_pos_2, int wrist_pos_1, int wrist_pos_2,
                int gripper_pos_1, int gripper_pos_2) {
@@ -181,14 +216,14 @@ void write_Pos(int base_pos_1, int base_pos_2,int elbow_pos_1,int elbow_pos_2,
   //Check Elbow: - lean forward, + lean backward 
   if(elbow_pos_1 >= elbow_pos_2) {
     for (pos = elbow_pos_1; pos >= elbow_pos_2; pos -= 1) { // goes from 90 degrees to 60 degrees
-      Serial.print("Elbow: In the first branch!, angle: ");
-      Serial.println(pos);
+      //Serial.print("Elbow: In the first branch!, angle: ");
+      //Serial.println(pos);
       myservo_elbow.write(pos);    
       delay(30);             
     } 
   } else {
     for (pos = elbow_pos_1; pos <= elbow_pos_2; pos += 1) { // goes from 90 degrees to 60 degrees
-      Serial.print("Elbow: In the 2nd branch!");
+      //Serial.print("Elbow: In the 2nd branch!");
       myservo_elbow.write(pos);    
       delay(30);             
     } 
@@ -200,16 +235,16 @@ void write_Pos(int base_pos_1, int base_pos_2,int elbow_pos_1,int elbow_pos_2,
   if(arm_pos_1 <= arm_pos_2) {
     for (pos = arm_pos_1; pos <= arm_pos_2; pos += 1) { // goes from 100 degrees to 120 degrees
       // in steps of 1 degree
-      Serial.print("Arm: In the first branch!, angle: ");
-      Serial.println(pos);
+      //Serial.print("Arm: In the first branch!, angle: ");
+      //Serial.println(pos);
       myservo_arm.write(pos);    // tell servo to go to position in variable 'pos'
       delay(15);             
     }  
   }else {
     for (pos = arm_pos_1; pos >= arm_pos_2; pos -= 1) { // goes from 100 degrees to 120 degrees
       // in steps of 1 degree
-      Serial.print("Arm: In the 2nd branch!, angle: ");
-      Serial.println(pos);
+      //Serial.print("Arm: In the 2nd branch!, angle: ");
+      //Serial.println(pos);
       myservo_arm.write(pos);    // tell servo to go to position in variable 'pos'
       delay(15);             
     }  
@@ -222,15 +257,15 @@ void write_Pos(int base_pos_1, int base_pos_2,int elbow_pos_1,int elbow_pos_2,
 
   if(base_pos_1 <= base_pos_2){
     for (pos = base_pos_1; pos <= base_pos_2; pos += 1) { // goes from 90 degrees to 60 degrees
-      Serial.print("Base: In the first branch!, angle: ");
-      Serial.println(pos);
+      //Serial.print("Base: In the first branch!, angle: ");
+      //Serial.println(pos);
       myservo_base.write(pos);    
       delay(15);
     }
   }else {
     for (pos = base_pos_1; pos >= base_pos_2; pos -= 1) { // goes from 90 degrees to 60 degrees
-      Serial.print("Base: In the 2nd branch!, angle: ");
-      Serial.println(pos);
+      //Serial.print("Base: In the 2nd branch!, angle: ");
+      //Serial.println(pos);
       myservo_base.write(pos);    
       delay(15);
   }
@@ -282,15 +317,15 @@ delay(100);
 
 if(base_pos_1 <= base_pos_2){
   for (pos = base_pos_1; pos <= base_pos_2; pos += 1) { // goes from 90 degrees to 60 degrees
-  Serial.print("Base: In the first branch!, angle: ");
-  Serial.println(pos);
+  //Serial.print("Base: In the first branch!, angle: ");
+  //Serial.println(pos);
   myservo_base.write(pos);    
   delay(15);
 }
 }else {
   for (pos = base_pos_1; pos >= base_pos_2; pos -= 1) { // goes from 90 degrees to 60 degrees
-  Serial.print("Base: In the 2nd branch!, angle: ");
-  Serial.println(pos);
+  //Serial.print("Base: In the 2nd branch!, angle: ");
+  //Serial.println(pos);
   myservo_base.write(pos);    
   delay(15);
 }
@@ -301,14 +336,14 @@ delay(100);
 //Check Elbow: - lean forward, + lean backward 
 if(elbow_pos_1 >= elbow_pos_2) {
   for (pos = elbow_pos_1; pos >= elbow_pos_2; pos -= 1) { // goes from 90 degrees to 60 degrees
-  Serial.print("Elbow: In the first branch!, angle: ");
-  Serial.println(pos);
+  //Serial.print("Elbow: In the first branch!, angle: ");
+  //Serial.println(pos);
   myservo_elbow.write(pos);    
   delay(30);             
 } 
 } else {
   for (pos = elbow_pos_1; pos <= elbow_pos_2; pos += 1) { // goes from 90 degrees to 60 degrees
-  Serial.print("Elbow: In the 2nd branch!");
+  //Serial.print("Elbow: In the 2nd branch!");
   myservo_elbow.write(pos);    
   delay(30);             
 } 
@@ -321,16 +356,16 @@ delay(100);
 if(arm_pos_1 <= arm_pos_2) {
   for (pos = arm_pos_1; pos <= arm_pos_2; pos += 1) { // goes from 100 degrees to 120 degrees
   // in steps of 1 degree
-  Serial.print("Arm: In the first branch!, angle: ");
-  Serial.println(pos);
+  //Serial.print("Arm: In the first branch!, angle: ");
+  //Serial.println(pos);
   myservo_arm.write(pos);    // tell servo to go to position in variable 'pos'
   delay(15);             
 }  
 }else {
   for (pos = arm_pos_1; pos >= arm_pos_2; pos -= 1) { // goes from 100 degrees to 120 degrees
   // in steps of 1 degree
-  Serial.print("Arm: In the 2nd branch!, angle: ");
-  Serial.println(pos);
+  //Serial.print("Arm: In the 2nd branch!, angle: ");
+  //Serial.println(pos);
   myservo_arm.write(pos);    // tell servo to go to position in variable 'pos'
   delay(15);             
 }  
@@ -360,11 +395,10 @@ void SetInitialPos(){
 }
 
 // Move the Robotic Arm to the component grabbing position
+/*
 void grabPos() {
   //Check Base
   // Base same as initial position, goes from 5 degrees to 5 degrees
-  myservo_elbow.write(5); 
-
   //Check Elbow: - lean forward, + lean backward 
   for (pos = 90; pos >= 30; pos -= 1) { // goes from 90 degrees to 60 degrees
 		myservo_elbow.write(pos);    
@@ -374,7 +408,6 @@ void grabPos() {
   
   //Check Arm: + lean forward, - lean backward
   for (pos = 100; pos <= 120; pos += 1) { // goes from 100 degrees to 120 degrees
-		// in steps of 1 degree
 		myservo_arm.write(pos);    // tell servo to go to position in variable 'pos'
 		delay(500);             
 	}  
@@ -382,21 +415,9 @@ void grabPos() {
 
   // Check Wrist: + counterclock, -clock
   for (pos = 80; pos <= 120; pos += 1) { 
-		// in steps of 1 degree
 		myservo_wrist.write(pos);    
 		delay(500);             
 	} 
 }
+*/
 
-void write_pos(int base_pos, int elbow_pos, int arm_pos, int wrist_pos, int gripper_pos) {
-  myservo_base.write(base_pos);    
-  delay(100);
-  myservo_elbow.write(elbow_pos);  
-  delay(100);
-  myservo_arm.write(arm_pos);   
-  delay(100);
-  myservo_wrist.write(wrist_pos);  
-  delay(100);
-  myservo_gripper.write(gripper_pos);
-  delay(100);
-}
