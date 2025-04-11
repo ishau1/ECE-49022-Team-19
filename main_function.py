@@ -12,19 +12,6 @@ from scipy.stats import linregress
 
 # Press the green button in the gutter to run the script.
 def fun1(path_image):
-import copy
-import time
-import Functions as Fun1
-
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
-from PIL import Image
-import numpy as np
-import matplotlib.pyplot as plt
-from scipy.stats import linregress
-
-
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
     start_time = time.time()  #Identifies the start time
     image = Image.open(path_image)  #Assigns png image to a variable
     image_array = np.array(image)   #Takes png and converts it to a 3D number array
