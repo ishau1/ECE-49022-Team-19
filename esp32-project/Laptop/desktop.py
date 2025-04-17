@@ -2,7 +2,7 @@ import serial
 import time
 
 # Change this to match your ESP32 port (e.g., COM3 on Windows, /dev/ttyACM0 on Linux)
-SERIAL_PORT = "/dev/ttyACM0"
+SERIAL_PORT = "COM3"
 BAUD_RATE = 115200
 
 # Data to send (the same classification numbers)
