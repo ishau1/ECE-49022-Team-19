@@ -77,7 +77,7 @@ def get_classification(image, model):
             for i in range(2):
                 # gets second image
                 key = 0
-                img, key = get_image(image, key)
+                img, key = get_image(image)
 
                 # gets results for second image
                 results = model.predict(img, project='Testing2', name='tests', save=True, save_crop=True)
@@ -121,6 +121,9 @@ def main():
         print("Error1")
 
     while True:
+        #component_num = get_classification(image, model)
+        #print(component_num)
+        #time.sleep(5)
         try:
             with serial.Serial(SERIAL_PORT, BAUD_RATE, timeout=1) as ser:
                 print("Waiting for ESP32 to be ready...")
