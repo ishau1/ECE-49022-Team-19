@@ -27,7 +27,7 @@ def colordeterm(red, green, blue):
 
 
 #  Function using RGB used to determine pixel color associated with resistor color chart
-def color_determ_color_chart_return(red, green, blue):
+def color_determ_color_chart_return(red, green, blue, gb_ratio):
     red = int(red)
     green = int(green)
     blue = int(blue)
@@ -41,11 +41,17 @@ def color_determ_color_chart_return(red, green, blue):
         return 2
     elif blue >= 160 and green >= 100 and (2*green > blue):  #Determines Resistor Background Color Light Blue
         return 12
+    elif (blue - green > 50) and (green - red > 40) and gb_ratio > 1.7:
+        return 12
+    elif (blue - red > 120) and (green - red > 80) and gb_ratio < 1.25:
+        return 12
     elif sum1 <= 50:
         if (red >= 5*green and red >= 5*blue) or (red - green >= 5 and red - blue >= 5):
             return 1
         elif green > blue and blue > red and (green - red >= 15):
             return 5
+        elif (blue - green) >= 20 and (blue - red) >= 25 and blue >= 45:
+            return 7
         else:
             return 0
     elif sum1 < 100 and abs(red - blue) <= 15 and abs(red - green) <= 15:  #Determines Black
@@ -62,9 +68,13 @@ def color_determ_color_chart_return(red, green, blue):
                                                                 and green - blue >= 25 and green >= 40):
         # Determines Green
         return 5
-    elif blue >= 4*red and green <= 60 and blue >= 105 and (red + green >= 10):  #Determines Blue
+    elif blue >= 4*red and green <= 60 and blue >= 105 and (red + green >= 10) and gb_ratio < 1.8:  #Determines Blue
+        return 6
+    elif blue >= 4*red and green <= 30 and blue >= 3*green and blue >= 40 and blue <= 100  and gb_ratio > 1.8:  #Determines Blue
         return 6
     elif green <= (blue - 20) and red <= (blue - 20) and abs(green - red) <= 25 and green <= 50:  #Determines Purple
+        return 7
+    elif green <= (blue - 80) and green > red and green <= 50 and gb_ratio > 2:
         return 7
     #  Determines Gray
     elif abs(red - blue) <= 25 and abs(red - green) <= 25 and abs(blue - green) <= 25 and sum1 >= 105 and green >= red:
@@ -87,34 +97,10 @@ def color_determ_color_chart_return(red, green, blue):
         return 5
     elif sum1 <= 75 and (red - 10 >= green) and (red - 10 >= blue):
         return 1
+    elif red - 5 >= green and red - 5 >= blue and red >= 40 and blue >= 25 and green >= 25:
+        return 1
     else:  #Determines pixel color to be none of the above
         return 11
-
-
-def color_determ_hsv(hue, saturation, value):
-    if value <= 35:  #Determines if pixel is black
-        return 0
-    elif ((hue <= 66) and (hue >= 55)) and (saturation <= 60 and value >= 80) and value <= 120:
-        return 8
-    elif (hue <= 66) and (hue >= 55):  #Determines if pixel is yellow
-        return 5
-    elif (hue <= 80) and (hue >= 67):  #Determines if pixel is yellow
-        return 4
-    elif hue <= 11 or hue >= 176:  #Determines if pixel is purple
-        return 7
-    elif (hue <= 115) and (hue >= 105) and (value >= 150):  #Determines if pixel is orange
-        return 3
-    elif (hue <= 130) and (hue >= 116) and (value >= 80) and (saturation >= 90):  #Determines if pixel is red
-        return 2
-    elif (hue >= 8) and (hue <= 15):  #Determines if pixel is blue
-        return 6
-    elif (hue >= 100) and (hue <= 130) and (value <= 90):  #Determines if pixel is red
-        return 1
-    elif (hue >= 95) and (hue <= 105) and (saturation <= 160 and value >= 115) and (value >= 115 and value <= 145):
-        # Determines if pixel is Gold
-        return 10
-    else:  #Determines pixel to be none of the above
-        return 12
 
 
 #  Function to determine which bin the resistor is to be sent to
@@ -122,27 +108,37 @@ def bin_determ(band_array, ratio1):
     count5s = band_array.count(5)
     count3s = band_array.count(3)
     count8s = band_array.count(8)
+    count6s = band_array.count(6)
+    count7s = band_array.count(7)
     count2s = band_array.count(2)
     count1s = band_array.count(1)
     count0s = band_array.count(0)
     sum01s = count0s + count1s
     sum012s = sum01s + count2s
+    sum23s = count2s + count3s
+    sum67s = count6s + count7s
     if len(band_array) < 3 :  #Checks if array is empty
         return 7  #Integer to let microprocessor know the no bin was determined
-    if (ratio1 <= 1.2 or ratio1 > 1.7) and count8s == 0 and count3s < 2:
+    if (ratio1 <= 1.2 or ratio1 > 1.7) and count8s == 0:
         if count5s and ratio1 > 1.7:
             return 9
+        elif count2s >= 3 and ratio1 > 2.1:
+            return 10
+        elif sum23s >= 2 and sum67s == 0:
+            return 11
         else:
             return 8
 
     elif count5s == 1 and sum012s == 4 and ratio1 <= 1.4:
         # Checks for edge case where 2 resistors have exact same color band
         return 8
-    elif count3s == 1 and count2s == 1 and sum012s >= 3:
-        return 10
     elif band_array[0] == 8 and band_array[1] == 2 or band_array[-1] == 8 and band_array[-2] == 2:  #Send to bin 8
         return 15
+    elif count3s == 1 and count2s == 1 and sum012s >= 3:
+        return 10
     elif band_array[0] == 6 and band_array[1] == 8 or band_array[-1] == 6 and band_array[-2] == 8:  #Send to bin 7
+        return 14
+    elif band_array[0] == 7 and band_array[1] == 8 or band_array[-1] == 7 and band_array[-2] == 8:  #Send to bin 7
         return 14
     elif band_array[0] == 5 and band_array[1] == 6 or band_array[-1] == 5 and band_array[-2] == 6:  #Send to bin 6
         return 13
@@ -154,13 +150,13 @@ def bin_determ(band_array, ratio1):
         return 11
     elif band_array[0] == 2 and band_array[1] == 2 or band_array[-1] == 2 and band_array[-2] == 2:  #Send to bin 3
         return 10
-    elif band_array[0] == 1 and band_array[1] == 5 or band_array[-1] == 1 and band_array[-2] == 5:  #Send to bin 2
+    elif band_array[0] == 1 and band_array[1] == 5 or band_array[-1] == 1 and band_array[-2] == 5:
         return 9
     elif band_array[0] == 2 and band_array[1] == 5 or band_array[-1] == 2 and band_array[-2] == 5:  #Send to bin 2
         return 9
-    elif (band_array[0] == 1 and band_array[1] == 0 and band_array[2] == 0) or (band_array[-1] == 1 and band_array[-2] == 0 and band_array[-3] == 0):
-        return 8
     elif sum01s >= 3:
+        return 11
+    elif (band_array[0] == 1 and band_array[1] == 0 and band_array[2] == 0) or (band_array[-1] == 1 and band_array[-2] == 0 and band_array[-3] == 0):
         return 8
     else:
         return 7  #Integer to let microprocessor know the no bin was determined
@@ -245,7 +241,7 @@ def dist_determ(x_coord1, y_coord1, x_coord2, y_coord2):
     return math.sqrt((x_coord1 - x_coord2)**2 + (y_coord1-y_coord2)**2)
 
 
-def pixel_glare_color_determ(x_coord, y_coord, slope, orientation, color_array, image_array, distance_var, height1, width1, color_orig):
+def pixel_glare_color_determ(x_coord, y_coord, slope, orientation, color_array, image_array, distance_var, height1, width1, color_orig, bg_ratio):
     distance_new_pixel_var = distance_var
     if slope != 0:
         new_slope = -slope
@@ -258,18 +254,21 @@ def pixel_glare_color_determ(x_coord, y_coord, slope, orientation, color_array, 
             new_pixel_color1 = color_determ_color_chart_return(
                     image_array[new_coord_y1][x_coord + distance_new_pixel_var][0],
                     image_array[new_coord_y1][x_coord + distance_new_pixel_var][1],
-                    image_array[new_coord_y1][x_coord + distance_new_pixel_var][2])
+                    image_array[new_coord_y1][x_coord + distance_new_pixel_var][2],
+                    bg_ratio)
             new_pixel_color2 = color_determ_color_chart_return(
                     image_array[new_coord_y2][x_coord - distance_new_pixel_var][0],
                     image_array[new_coord_y2][x_coord - distance_new_pixel_var][1],
-                    image_array[new_coord_y2][x_coord - distance_new_pixel_var][2])
+                    image_array[new_coord_y2][x_coord - distance_new_pixel_var][2],
+                    bg_ratio)
             image_array[new_coord_y1][x_coord + distance_new_pixel_var][0] = 255
         else:
             new_pixel_color1 = 13
             new_pixel_color2 = color_determ_color_chart_return(
                     image_array[new_coord_y2][x_coord - distance_new_pixel_var][0],
                     image_array[new_coord_y2][x_coord - distance_new_pixel_var][1],
-                    image_array[new_coord_y2][x_coord - distance_new_pixel_var][2])
+                    image_array[new_coord_y2][x_coord - distance_new_pixel_var][2],
+                    bg_ratio)
             image_array[new_coord_y1][x_coord][0] = 255
         image_array[new_coord_y2][x_coord - distance_new_pixel_var][0] = 255
         #print(new_coord_y1, x_coord + distance_new_pixel_var, new_pixel_color1, distance_var, 1, "V")
@@ -281,18 +280,21 @@ def pixel_glare_color_determ(x_coord, y_coord, slope, orientation, color_array, 
             new_pixel_color1 = color_determ_color_chart_return(
                     image_array[y_coord + distance_new_pixel_var][new_coord_x1][0],
                     image_array[y_coord + distance_new_pixel_var][new_coord_x1][1],
-                    image_array[y_coord + distance_new_pixel_var][new_coord_x1][2])
+                    image_array[y_coord + distance_new_pixel_var][new_coord_x1][2],
+                    bg_ratio)
             new_pixel_color2 = color_determ_color_chart_return(
                     image_array[y_coord - distance_new_pixel_var][new_coord_x2][0],
                     image_array[y_coord - distance_new_pixel_var][new_coord_x2][1],
-                    image_array[y_coord - distance_new_pixel_var][new_coord_x2][2])
+                    image_array[y_coord - distance_new_pixel_var][new_coord_x2][2],
+                    bg_ratio)
             image_array[y_coord + distance_new_pixel_var][new_coord_x1][0] = 255
         else:
             new_pixel_color1 = 13
             new_pixel_color2 = color_determ_color_chart_return(
                     image_array[y_coord - distance_new_pixel_var][new_coord_x2][0],
                     image_array[y_coord - distance_new_pixel_var][new_coord_x2][1],
-                    image_array[y_coord - distance_new_pixel_var][new_coord_x2][2])
+                    image_array[y_coord - distance_new_pixel_var][new_coord_x2][2],
+                    bg_ratio)
             image_array[y_coord][new_coord_x1][0] = 255
         image_array[y_coord - distance_new_pixel_var][new_coord_x2][0] = 255
         #print(y_coord + distance_new_pixel_var, new_coord_x1, new_pixel_color1, distance_var, 1, "H")
@@ -309,12 +311,12 @@ def pixel_glare_color_determ(x_coord, y_coord, slope, orientation, color_array, 
     elif pixel_color_array.count(mode1) == 2 and mode1 != 11:
         color_array[-1] = mode1
     elif sum01s == 2 and color_orig != 0 and color_orig != 1:
-        pixel_glare_color_determ(x_coord, y_coord, slope, orientation, color_array, image_array, distance_var + 4, height1, width1, 0)
+        pixel_glare_color_determ(x_coord, y_coord, slope, orientation, color_array, image_array, distance_var + 4, height1, width1, 0, bg_ratio)
     elif sum12s == 2:
         color_array[-1] = 2
         #pixel_glare_color_determ(x_coord, y_coord, slope, orientation, color_array, image_array, distance_var + 4, height1, width1, 1)
     else:
-        pixel_glare_color_determ(x_coord, y_coord, slope, orientation, color_array, image_array, distance_var + 4, height1, width1, color_orig)
+        pixel_glare_color_determ(x_coord, y_coord, slope, orientation, color_array, image_array, distance_var + 4, height1, width1, color_orig, bg_ratio)
     return None
 
 #  Function that determines the x and y coordinates of the 4 vertices that define location of the body of the Resistor
@@ -442,6 +444,7 @@ def orientation_determ(grayscale_array, width1, length1, pixel1):
 #  Function also determines whether the integers are in reverse order or not
 def band_integer_determ(long_array, short_array):
     index1 = 0  #Itteration variable
+    jump_number = 8
     length1 = len(long_array)  #Determines the length of the array
     while index1 < (length1 - 4):  #Iterates through all color values of array except final 4
         if long_array[index1] != long_array[index1 + 1]:  #Checks for change in pixel value
@@ -456,28 +459,28 @@ def band_integer_determ(long_array, short_array):
             sum1and2 = count1s + count2s
             if count8s == 4:
                 short_array.append(long_array[index1 + 1])
-                if index1 <= (length1 - 11) and not (long_array[index1 + 1] == 12 or
+                if index1 <= (length1 - jump_number) and not (long_array[index1 + 1] == 12 or
                                                      long_array[index1 + 1] == 11 or long_array[index1 + 1] == 13):
                     # Checks if index value is less than 10 from max value
-                    index1 += 10  #Jumps 10 pixel in order to leap pass pixel band which it is currently in
+                    index1 += jump_number  #Jumps 10 pixel in order to leap pass pixel band which it is currently in
             elif sum1 >= 3 and median1 == long_array[index1 + 1] and median1 != 8:  #Determines if the change in pixels should result in
                 # new pixel being added to the short_array
                 short_array.append(long_array[index1 + 1])  #Adds integer to short_array
-                if index1 <= (length1 - 11) and not (long_array[index1 + 1] == 12 or
+                if index1 <= (length1 - jump_number) and not (long_array[index1 + 1] == 12 or
                                                      long_array[index1 + 1] == 11 or long_array[index1 + 1] == 13):
                     # Checks if index value is less than 10 from max value
-                    index1 += 10  #Jumps 10 pixel in order to leap pass pixel band which it is currently in
+                    index1 += jump_number  #Jumps 10 pixel in order to leap pass pixel band which it is currently in
             elif sum1and0 >= 3:
                 if count1s < count0s:
                     short_array.append(0)
                 else:
                     short_array.append(1)
-                if index1 <= (length1 - 11):
-                    index1 += 10  #Jumps 10 pixel in order to leap pass pixel band which it is currently in
+                if index1 <= (length1 - jump_number):
+                    index1 += jump_number  #Jumps 10 pixel in order to leap pass pixel band which it is currently in
             elif sum1and2 >= 3:
                 short_array.append(2)
-                if index1 <= (length1 - 11):
-                    index1 += 10
+                if index1 <= (length1 - jump_number):
+                    index1 += jump_number
 
         index1 += 1  #Increases increment by 1
 
@@ -500,7 +503,7 @@ def band_integer_determ(long_array, short_array):
 #  Function that determines the pixels in the line that bisects the body of the resistor
 #  Function that determines the colors associated with that pixel using an RGB function
 def color_array_line_plotter(slope1, y_int1, x_coord1, y_coord1, x_coord2, y_coord2, orientation3, color_array1,
-                             image_array1, color_array2):
+                             image_array1, color_array2, bg_ratio):
     dimensions1 = image_array1.shape
     if orientation3:  #Orientation value that determines the Resistor to be more Vertical
         starter_index1 = y_coord1  #The y-axis value (row) of the first pixel in the line that bisects Resistor
@@ -512,11 +515,12 @@ def color_array_line_plotter(slope1, y_int1, x_coord1, y_coord1, x_coord2, y_coo
             color_array1.append(color_determ_color_chart_return(
                 image_array1[starter_index1][starter_index2][0],
                 image_array1[starter_index1][starter_index2][1],
-                image_array1[starter_index1][starter_index2][2]))
+                image_array1[starter_index1][starter_index2][2],
+                bg_ratio))
 
             #if color_array1[-1] == 11 or color_array1[-1] == 8 or color_array1[-1] == 2 or color_array1[-1] == 1 or color_array1[-1] == 6:
             pixel_glare_color_determ(starter_index2, starter_index1, slope1, orientation3, color_array1,
-                                              image_array1, 8, dimensions1[0], dimensions1[1], color_array1[-1])
+                                              image_array1, 8, dimensions1[0], dimensions1[1], color_array1[-1], bg_ratio)
 
             # Function that adds the pixels color determined by RGB to an array
             image_array1[starter_index1][starter_index2][1] = 255  #Assigns the pixel in the line green value
@@ -535,11 +539,12 @@ def color_array_line_plotter(slope1, y_int1, x_coord1, y_coord1, x_coord2, y_coo
             color_array1.append(color_determ_color_chart_return(
                 image_array1[starter_index2][starter_index1][0],
                 image_array1[starter_index2][starter_index1][1],
-                image_array1[starter_index2][starter_index1][2]))
+                image_array1[starter_index2][starter_index1][2],
+                bg_ratio))
 
             #if color_array1[-1] == 11 or color_array1[-1] == 8 or color_array1[-1] == 2 or color_array1[-1] == 1 or color_array1[-1] == 6:
             pixel_glare_color_determ(starter_index1, starter_index2, slope1, orientation3, color_array1,
-                                              image_array1, 8, dimensions1[0], dimensions1[1], color_array1[-1])
+                                              image_array1, 8, dimensions1[0], dimensions1[1], color_array1[-1], bg_ratio)
 
             # Function that adds the pixels color determined by RGB to an array
             image_array1[starter_index2][starter_index1][1] = 255  #Assigns the pixel in the line green value
@@ -595,8 +600,11 @@ def critical_points_determ(orientation1, coords, final_slope):
     elif final_slope >= 0.25 and final_slope < 0.4:
         var1 = 3
         var2 = 1
-    elif final_slope >= 0.4:
+    elif final_slope >= 0.4 and final_slope < 0.7:
         var1 = 5
+        var2 = 1
+    elif final_slope >= 0.7:
+        var1 = 7
         var2 = 1
     elif final_slope <= -0.07 and final_slope > -0.15:
         var1 = 1
@@ -607,9 +615,12 @@ def critical_points_determ(orientation1, coords, final_slope):
     elif final_slope <= -0.25 and final_slope > -0.4:
         var1 = 1
         var2 = 3
-    else:
+    elif final_slope <= -0.4 and final_slope > -0.7:
         var1 = 1
         var2 = 5
+    else:
+        var1 = 1
+        var2 = 7
     sum1 = var1 + var2
     if orientation1:  # True if body of resistor is orientated in a more vertical direction
         x1 = int((var1*coords[0] + var2*coords[2]) / sum1)  # Calculates left x value that will be used to determine bisecting line
@@ -641,3 +652,106 @@ def median_blue_determ(image_array, x_values, y_values):
 
 
     return median_blue, median_green
+
+def array_to_band_integer(array1):
+    filter_array = [x for x in array1 if x not in (11, 12, 13)]
+    length1 = len(filter_array)
+    count0s = filter_array.count(0)
+    count1s = filter_array.count(1)
+    count2s = filter_array.count(2)
+    count3s = filter_array.count(3)
+    count4s = filter_array.count(4)
+    count5s = filter_array.count(5)
+    count6s = filter_array.count(6)
+    count7s = filter_array.count(7)
+    sum012s = count0s + count1s + count2s
+    sum23s = count2s + count3s
+    sum13s = count1s + count3s
+    sum07s = count0s + count7s
+    sum45s = count4s + count5s
+    median1 = statistics.median(filter_array)
+    if math.ceil(median1) == math.floor(median1):
+        median1 = int(median1)
+    mode1 = statistics.mode(filter_array)
+    countmode1 = filter_array.count(mode1)
+    ratio1 = countmode1/length1
+
+
+
+    if median1 == 8 and mode1 == 8 and ratio1 > 0.75 and length1 >= 5:
+        return 8
+    else:
+        filter_array1 = [x for x in filter_array if x != 8]
+
+    if not filter_array1:
+        return -1
+
+    length1 = len(filter_array1)
+    median1 = statistics.median(filter_array1)
+    if math.ceil(median1) == math.floor(median1):
+        median1 = int(median1)
+    mode1 = int(statistics.mode(filter_array1))
+    ratio1 = mode1/length1
+    ratio012 = sum012s/length1
+    ratio45 = sum45s/length1
+    ratio5 = count5s/length1
+    ratio07 = sum07s/length1
+    ratio23 = sum23s/length1
+    ratio13 = sum13s/length1
+
+    if ratio012 >= 0.5 and count3s < 2:
+        if count2s >= count1s and count2s >= 2:
+            return 2
+        if length1 >= 5:
+            if ratio5 >= 0.75:
+                return 5
+            trimmed_array = filter_array1[1:-1]
+            temp1 = int(statistics.median(trimmed_array))
+            return temp1
+        if count2s >= count1s and (mode1 == 2 or median1 == 2):
+            return 2
+        elif count1s >= count0s and count1s >= count2s:
+            return 1
+        else:
+            return 0
+    elif ratio45 >= 0.7 and length1 >= 5:
+        trimmed_array = filter_array1[1:-1]
+        temp1 = int(statistics.median(trimmed_array))
+        return temp1
+    elif ratio07 >= 0.8 and count7s >= count0s:
+        return 7
+    elif (ratio23 > 0.75 or ratio13 > 0.75) and count3s >= 2:
+        return 3
+    elif median1 == mode1:
+        return median1
+    elif length1 % 2 == 0 and isinstance(median1, int):
+        return median1
+    else:
+        if isinstance(median1, float):
+            return mode1
+        else:
+            return median1
+
+
+def band_integer_determ1(long_array, short_array):
+    index1 = 0  #Itteration variable
+    length1 = len(long_array)  #Determines the length of the array
+    while index1 < (length1 - 4):  #Iterates through all color values of array except final 4
+        temp_array = [long_array[index1],long_array[index1 + 1], long_array[index1 + 2], long_array[index1 + 3]] #Checks for change in pixel value
+        count = len([x for x in temp_array if x not in (12, 13)])
+        if count >= 3:
+            index2 = 1
+            if index1 + index2 < (length1 - 1):
+                while long_array[index1 + 2 + index2] not in (12, 13) or long_array[index1 + 3 + index2] not in (12, 13) and index2 <= 11:
+                    temp_array.append(long_array[index1 + 3 + index2])
+                    index2 += 1
+
+            index1 = index1 + 2 + index2
+
+            temp1 = array_to_band_integer(temp_array)
+            if temp1 != -1:
+                short_array.append(temp1)
+
+        index1 = index1 + 1
+
+    return True  #Currently outdated, does not affect main functions output
