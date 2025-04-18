@@ -7,7 +7,7 @@ import shutil
 import serial
 
 # Change this to match your ESP32 port (e.g., COM3 on Windows, /dev/ttyACM0 on Linux)
-SERIAL_PORT = "COM3"
+SERIAL_PORT = "/dev/ttyACM0"
 BAUD_RATE = 115200
 
 def wait_for_ready(ser):
@@ -73,34 +73,54 @@ def get_classification(image, model):
         component_num = int(results[0].boxes[0].cls)
 
         # checks confidence
-        if confidence[0] <= 0.60:
+        if confidence[0] <= 0.70:
             for i in range(2):
                 # gets second image
                 key = 0
                 img, key = get_image(image)
 
+                # delete Testing2 folder
+                shutil.rmtree("Testing2")
+
                 # gets results for second image
                 results = model.predict(img, project='Testing2', name='tests', save=True, save_crop=True)
 
                 # if confidence is still low, classify component as miscellaneous
-                if confidence[0] <= 0.60:
+                if confidence[0] <= 0.70:
                     component_num = 7
                 else:
                     component_num = int(results[0].boxes[0].cls)
 
         # if resistor identified pass to resistor identification function
+        comp_num1 = 0
+        comp_num2 = 1
         if component_num == 0:
-            path_image_crop = "Testing2/tests/crops/Resistor/image0.jpg"
-            component_num = main_function.fun1(path_image_crop)
+            while comp_num1 != comp_num2:
+                path_image_crop = "Testing2/tests/crops/Resistor/image0.jpg"
+                comp_num1 = main_function.fun1(path_image_crop)
+
+                # delete Testing2 folder
+                shutil.rmtree("Testing2")
+
+                img, key = get_image(image)
+                results = model.predict(img, project='Testing2', name='tests', save=True, save_crop=True)
+                path_image_crop = "Testing2/tests/crops/Resistor/image0.jpg"
+                comp_num2 = main_function.fun1(path_image_crop)
+
+                # delete Testing2 folder
+                shutil.rmtree("Testing2")
+            component_num = comp_num1
 
         print(f"The component is a {component_num} with a confidence of {float(confidence[0]) * 100}%")
 
         # deletes tests folder with cropped image
-        #shutil.rmtree("Testing2")
+        if os.path.exists("Testing2"):
+            shutil.rmtree("Testing2")
 
         # breaks loop if 'q' key is hit
         # elif cv2.waitKey(1) & 0xFF == ord("q"):
         #    break
+
     return(component_num)
 
 def main():
@@ -121,6 +141,10 @@ def main():
         print("Error1")
 
     while True:
+        #component_num = get_classification(image, model)
+        #print(component_num)
+        #time.sleep(5)
+
         try:
             with serial.Serial(SERIAL_PORT, BAUD_RATE, timeout=1) as ser:
                 print("Waiting for ESP32 to be ready...")
@@ -143,6 +167,7 @@ def main():
             #    break
         except serial.SerialException as e:
             print(f"Serial error: {e}")
+
     image.release()
 
 if __name__ == "__main__":
