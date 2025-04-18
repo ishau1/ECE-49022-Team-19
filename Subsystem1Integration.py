@@ -2,12 +2,12 @@ from ultralytics import YOLO
 import cv2
 import os
 import time
-import ResistorType
+import main_function
 import shutil
 import serial
 
 # Change this to match your ESP32 port (e.g., COM3 on Windows, /dev/ttyACM0 on Linux)
-SERIAL_PORT = "/dev/ttyACM0"
+SERIAL_PORT = "COM3"
 BAUD_RATE = 115200
 
 def wait_for_ready(ser):
@@ -91,12 +91,12 @@ def get_classification(image, model):
         # if resistor identified pass to resistor identification function
         if component_num == 0:
             path_image_crop = "Testing2/tests/crops/Resistor/image0.jpg"
-            component_num = ResistorType.ResistorIdentification(path_image_crop)
+            component_num = main_function.fun1(path_image_crop)
 
         print(f"The component is a {component_num} with a confidence of {float(confidence[0]) * 100}%")
 
         # deletes tests folder with cropped image
-        shutil.rmtree("Testing2/tests")
+        #shutil.rmtree("Testing2")
 
         # breaks loop if 'q' key is hit
         # elif cv2.waitKey(1) & 0xFF == ord("q"):
@@ -105,7 +105,7 @@ def get_classification(image, model):
 
 def main():
     # load trained YOLO model
-    model = YOLO("runs/detect/train2/weights/best.pt")
+    model = YOLO("train2/weights/best.pt")
 
     # get image from camera
     image = cv2.VideoCapture(0)
@@ -121,9 +121,6 @@ def main():
         print("Error1")
 
     while True:
-        #component_num = get_classification(image, model)
-        #print(component_num)
-        #time.sleep(5)
         try:
             with serial.Serial(SERIAL_PORT, BAUD_RATE, timeout=1) as ser:
                 print("Waiting for ESP32 to be ready...")
@@ -139,14 +136,13 @@ def main():
                 print("Finished sending classifications.")
 
                 # deletes tests folder with cropped image
-                shutil.rmtree("Testing2/tests")
+                shutil.rmtree("Testing2")
 
             # breaks loop if 'q' key is hit
             #elif cv2.waitKey(1) & 0xFF == ord("q"):
             #    break
         except serial.SerialException as e:
             print(f"Serial error: {e}")
-
     image.release()
 
 if __name__ == "__main__":
