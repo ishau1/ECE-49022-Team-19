@@ -105,7 +105,7 @@ def get_classification(image, model):
 
 def main():
     # load trained YOLO model
-    model = YOLO("runs/detect/train2/weights/best.pt")
+    model = YOLO("train2/weights/best.pt")
 
     # get image from camera
     image = cv2.VideoCapture(0)
@@ -121,9 +121,10 @@ def main():
         print("Error1")
 
     while True:
-        #component_num = get_classification(image, model)
-        #print(component_num)
-        #time.sleep(5)
+        component_num = get_classification(image, model)
+        print(component_num)
+        time.sleep(5)
+        '''
         try:
             with serial.Serial(SERIAL_PORT, BAUD_RATE, timeout=1) as ser:
                 print("Waiting for ESP32 to be ready...")
@@ -146,7 +147,7 @@ def main():
             #    break
         except serial.SerialException as e:
             print(f"Serial error: {e}")
-
+        '''
     image.release()
 
 if __name__ == "__main__":
