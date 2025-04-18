@@ -1,10 +1,10 @@
 #include <Arduino.h>
 #include <ESP32Servo.h>
 
-//Function Declaration
+//Fuction Declaration
 void SetInitialPos();
 void move_arm(int type);
-void grab_Pos();
+// void grab_Pos();
 void write_Pos(int, int, int, int, int, int, int, int, int, int); // The Complex one for movements
 void write_Pos_Back(int, int, int, int, int, int, int, int, int, int); // The Complex one for movements back
 
@@ -15,12 +15,10 @@ Servo myservo_elbow;
 Servo myservo_arm;
 Servo myservo_wrist;
 Servo myservo_gripper;
-
-int pos = 0;              // variable to store the servo position
                           
-int servoPin_base = 13;
+int servoPin_base =  13;
 int servoPin_elbow = 15;
-int servoPin_arm = 16;   
+int servoPin_arm =   16;   
 int servoPin_wrist = 17;  // 17, 18, 3, 6, not working
 int servoPin_gripper = 14;
 
@@ -143,14 +141,14 @@ void setup() {
 void loop(){
 
   if (Serial.available() > 0) {
-    String type_1  = Serial.readStringUntil('\n');  // Input type of component
-    type_Int = type_1.toInt();                      // Convert input to INT type
+    String classification  = Serial.readStringUntil('\n');  // Input type of component
+    classification_Int = classification.toInt();                      // Convert input to INT type
 
-    if(type_Int <= 0 | type_Int > 14) {
+    if(classification_Int <= 0 | classification_Int > 14) {
       Serial.print("Not a valid type number");
     } else {
       Serial.print("Begin to move with Type: ");
-      Serial.print(type_Int);
+      Serial.print(classification_Int);
     
       //begin moving
       digitalWrite(LED_Shine, HIGH);   // turn the LED on (HIGH is the voltage level)
@@ -158,7 +156,7 @@ void loop(){
       digitalWrite(LED_Shine, LOW);    // turn the LED off by making the voltage LOW
       delay(1000);                     // wait for a second
 
-      move_arm(type_Int);
+      move_arm(classification_Int);
     }
   }
 }
@@ -216,14 +214,11 @@ void write_Pos(int base_pos_1, int base_pos_2,int elbow_pos_1,int elbow_pos_2,
   //Check Elbow: - lean forward, + lean backward 
   if(elbow_pos_1 >= elbow_pos_2) {
     for (pos = elbow_pos_1; pos >= elbow_pos_2; pos -= 1) { // goes from 90 degrees to 60 degrees
-      //Serial.print("Elbow: In the first branch!, angle: ");
-      //Serial.println(pos);
       myservo_elbow.write(pos);    
       delay(30);             
     } 
   } else {
     for (pos = elbow_pos_1; pos <= elbow_pos_2; pos += 1) { // goes from 90 degrees to 60 degrees
-      //Serial.print("Elbow: In the 2nd branch!");
       myservo_elbow.write(pos);    
       delay(30);             
     } 
@@ -375,9 +370,11 @@ delay(100);
 
 }
 
+/*
 void grab_Pos(){
   write_Pos(5,5, 90,15, 100,140, 80,80, 0,0);
 }
+*/
 
 void SetInitialPos(){  
   // Set Initial Position
