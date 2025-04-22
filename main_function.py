@@ -25,27 +25,25 @@ def fun1(path_image):
     Fun1.color_array_filler(dimensions, image_array, color_array, x_values, y_values)  #Runs function that blacks out all pixels except for
     median_blue_value, median_green_value = Fun1.median_blue_determ(image_array, x_values, y_values)
     # Determines the median blue and green pixel value for the background of the resistor
+    if len(x_values) == 0:
+        return 7
     green_blue_ratio = median_blue_value/median_green_value
-    result = linregress(x_values, y_values)
-    result1 = linregress(y_values, x_values)
-    slope = result.slope
+    result1 = linregress(x_values, y_values)
+    result2 = linregress(y_values, x_values)
     slope1 = result1.slope
+    slope2 = result2.slope
 
 
-    if abs(slope) < abs(slope1):
-        orientation2 = False
-        slope_final = slope
-    else:
-        orientation2 = True
-        slope_final = slope1
+
+    orientation2, slope_final = Fun1.orientation_determ2(slope1,slope2)
 
     # except for pixel in the body of the resistor
 
     pixel_value_var = 10  #Helper variable that varies based on number of pixels in the body of the resistor
 
-    orientation1 = Fun1.orientation_determ(color_array, dimensions[1], dimensions[0], pixel_value_var)
+    #orientation1 = Fun1.orientation_determ(color_array, dimensions[1], dimensions[0], pixel_value_var)
     # Returns True if resistor is more Vertical, Returns False if resistor is more horizontal
-    coords2 = Fun1.line_bisection_coords1(color_array, pixel_value_var, orientation1, dimensions[0], dimensions[1])
+    coords2 = Fun1.line_bisection_coords1(color_array, pixel_value_var, orientation2, dimensions[0], dimensions[1])
     # Array containing 8 values representing the x and y of the 4 vertices of the body of the resistor
 
     bool_check = coords2.count(0)
@@ -66,19 +64,13 @@ def fun1(path_image):
     color_array_color_chart = []  #Array that will contain the colors of every pixel along the bisecting line
     color_array_color_chart_bands_only = []  #Array that will only contain the integer values associated
     # with each individual color band
-    Fun1.color_array_line_plotter(slope, y_int, x1, y1, x2, y2, orientation1,
+    Fun1.color_array_line_plotter(slope, y_int, x1, y1, x2, y2, orientation2,
                              color_array_color_chart, image_array, color_array, green_blue_ratio)
     # Function that plots bisecting line in gray on the color array
 
-    # With colors based on the resistor color chart. Top is HSV and bottom is RGB
-    #for i in range(0, len(color_array_color_chart), 25):
-    #    print(color_array_color_chart[i:i + 25])
-    orientation_band = Fun1.band_integer_determ1(color_array_color_chart, color_array_color_chart_bands_only)
-    # Function that determines the orientation of the color band.
-    # Returns True if color_array_color_chart_bands_only array is in reverse order
-    if orientation_band:  #Checks if the orientation band boolean variable is true
-        color_array_color_chart_bands_only = color_array_color_chart_bands_only[::-1]
-        # Reverse the order of the integers in color_array_color_chart_bands_only array
+    Fun1.band_integer_determ1(color_array_color_chart, color_array_color_chart_bands_only)
+    # Function that determines the integers correlated with the color bands
+
 
 
     #print(color_array_color_chart_bands_only)  #Prints the array of the integers associated with each color band
