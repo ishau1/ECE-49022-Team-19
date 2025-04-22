@@ -752,4 +752,14 @@ def band_integer_determ1(long_array, short_array):
 
         index1 = index1 + 1
 
-    return True  #Currently outdated, does not affect main functions output
+    return None  #Currently outdated, does not affect main functions output
+
+def orientation_determ2(slopeA, slopeB):
+    if abs(slopeA) < abs(slopeB):
+        orientation2 = False
+        slope_final = slopeA
+    else:
+        orientation2 = True
+        slope_final = slopeB
+
+    return orientation2, slope_final
