@@ -40,6 +40,8 @@ if __name__ == '__main__':
     print(number_ratio_in_range/total_iterations)
     print(statistics.median(time_values))
     print(statistics.mean(time_values))
+    print(max(time_values))
+
 
 
 
