@@ -121,8 +121,8 @@ def bin_determ(band_array, ratio1):
         return 7  #Integer to let microprocessor know the no bin was determined
     if band_array[0] == 6 or band_array[0] == 7 or band_array[-1] == 6 or band_array[-1] == 7:  # Send to bin 7
         return 14
-    if (ratio1 <= 1.2 or ratio1 > 1.7) and count8s == 0:
-        if count5s and ratio1 > 1.7:
+    if (ratio1 <= 1.2 or ratio1 > 1.65) and count8s == 0:
+        if count5s and ratio1 > 1.65:
             return 9
         elif count2s >= 3 and ratio1 > 2.1:
             return 10
@@ -739,10 +739,10 @@ def band_integer_determ1(long_array, short_array):
         count = len([x for x in temp_array if x not in (12, 13)])
         if count >= 3:
             index2 = 1
-            if index1 + index2 < (length1 - 1):
-                while (index1 + 3 + index2) < (length1 - 1) and long_array[index1 + 2 + index2] not in (12, 13) or long_array[index1 + 3 + index2] not in (12, 13) and index2 <= 11:
-                    temp_array.append(long_array[index1 + 3 + index2])
-                    index2 += 1
+            #if (index1 + index2 + 3) < (length1 - 1):
+            while (index1 + 3 + index2) < (length1 - 1) and long_array[index1 + 2 + index2] not in (12, 13) or long_array[index1 + 3 + index2] not in (12, 13) and index2 <= 11:
+                temp_array.append(long_array[index1 + 3 + index2])
+                index2 += 1
 
             index1 = index1 + 2 + index2
 
