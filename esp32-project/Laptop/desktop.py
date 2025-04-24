@@ -18,6 +18,8 @@ def wait_for_ready(ser):
             buffer += byte
             if "READY" in buffer:
                 elapsed = time.time() - start_time
+
+        
                 print(f"ESP32 is ready (response time: {elapsed:.3f} seconds)")
                 return
         else:

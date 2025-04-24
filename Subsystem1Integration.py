@@ -7,7 +7,7 @@ import shutil
 import serial
 
 # Change this to match your ESP32 port (e.g., COM3 on Windows, /dev/ttyACM0 on Linux)
-SERIAL_PORT = "/dev/ttyACM0"
+SERIAL_PORT = "COM5"
 BAUD_RATE = 115200
 
 def wait_for_ready(ser):
@@ -121,7 +121,7 @@ def get_classification(image, model):
         # elif cv2.waitKey(1) & 0xFF == ord("q"):
         #    break
 
-    return(component_num)
+    return(str(component_num))
 
 def main():
     # load trained YOLO model
@@ -160,7 +160,8 @@ def main():
                 print("Finished sending classifications.")
 
                 # deletes tests folder with cropped image
-                shutil.rmtree("Testing2")
+                if os.path.exists("Testing2"):
+                    shutil.rmtree("Testing2")
 
             # breaks loop if 'q' key is hit
             #elif cv2.waitKey(1) & 0xFF == ord("q"):
