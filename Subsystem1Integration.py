@@ -58,6 +58,19 @@ def get_classification(image, model):
         path_txt = "Testing2/tests/labels/test.txt"
         results[0].save_txt(path_txt)
 
+        num_class = len(results[0].boxes.conf)
+        while num_class != 1:
+            shutil.rmtree("Testing2")
+            
+            # gets image
+            result, img = image.read()
+
+            # gets results for image from object detection model
+            results = model.predict(img, project='Testing2', name='tests', save=True, save_crop=True)
+            path_txt = "Testing2/tests/labels/test.txt"
+            results[0].save_txt(path_txt)
+            num_class = len(results[0].boxes.conf)
+
         # check if txt file exists, indicating if object is detected if not keep checking until path exists
         while not os.path.exists(path_txt):
             # gets image
@@ -167,10 +180,10 @@ def main():
         print("Error1")
 
     while True:
-        #component_num = get_classification(image, model)
-        #print(component_num)
-        #time.sleep(5)
-
+        component_num = get_classification(image, model)
+        print(component_num)
+        time.sleep(5)
+        '''
         try:
             with serial.Serial(SERIAL_PORT, BAUD_RATE, timeout=1) as ser:
                 print("Waiting for ESP32 to be ready...")
@@ -193,7 +206,7 @@ def main():
             #    break
         except serial.SerialException as e:
             print(f"Serial error: {e}")
-
+        '''
     image.release()
 
 if __name__ == "__main__":
