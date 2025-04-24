@@ -124,7 +124,7 @@ void setup()
     write_Pos(5,5, 70,15, 100,140, 80,80, 0,0); // initialized position -> grasp position
     //<======= Robotic Arm Added Code end
 
-    Serial.println("READY");
+    //Serial.println("READY");
 }
 
 void loop()
@@ -185,7 +185,6 @@ void loop()
         else if (classification == "end")
         {
             Serial.println("Received 'end' - Stopping processing.");
-            return;
         }
 
         // <==== Added Code: Robotic Arm Movement
