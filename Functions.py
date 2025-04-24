@@ -154,6 +154,14 @@ def bin_determ(band_array, ratio1):
         return 9
     elif band_array[0] == 2 and band_array[1] == 5 or band_array[-1] == 2 and band_array[-2] == 5:  #Send to bin 2
         return 9
+    elif band_array[0] == 1 and band_array[1] == 0 and band_array[2] == 0:
+        return 8
+    elif band_array[-1] == 1 and band_array[-2] == 0 and band_array[-3] == 0:
+        return 8
+    elif band_array[0] == 2 and band_array[1] == 0 and band_array[2] == 0:
+        return 8
+    elif band_array[-1] == 2 and band_array[-2] == 0 and band_array[-3] == 0:
+        return 8
     elif sum01s >= 3:
         return 11
     else:
