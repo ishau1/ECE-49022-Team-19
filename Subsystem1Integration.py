@@ -7,7 +7,7 @@ import shutil
 import serial
 
 # Change this to match your ESP32 port (e.g., COM3 on Windows, /dev/ttyACM0 on Linux)
-SERIAL_PORT = "/dev/ttyACM0"
+SERIAL_PORT = "COM5"
 BAUD_RATE = 115200
 
 def wait_for_ready(ser):
@@ -96,16 +96,42 @@ def get_classification(image, model):
         comp_num2 = 1
         if component_num == 0:
             while comp_num1 != comp_num2:
-                path_image_crop = "Testing2/tests/crops/Resistor/image0.jpg"
-                comp_num1 = main_function.fun1(path_image_crop)
+                img, key = get_image(image)
+                results = model.predict(img, project='Testing2', name='tests', save=True, save_crop=True)
+
+                if int(results[0].boxes[0].cls) == 0:
+                    path_image_crop = "Testing2/tests/crops/Resistor/image0.jpg"
+                    comp_num1 = main_function.fun1(path_image_crop)
+                else:
+                    shutil.rmtree("Testing2")
+                    img, key = get_image(image)
+                    results = model.predict(img, project='Testing2', name='tests', save=True, save_crop=True)
+                    if int(results[0].boxes[0].cls) == 0:
+                        path_image_crop = "Testing2/tests/crops/Resistor/image0.jpg"
+                        comp_num1 = main_function.fun1(path_image_crop)
+                    else:
+                        comp_num1 == 7
+                        comp_num2 == 7
 
                 # delete Testing2 folder
                 shutil.rmtree("Testing2")
 
                 img, key = get_image(image)
                 results = model.predict(img, project='Testing2', name='tests', save=True, save_crop=True)
-                path_image_crop = "Testing2/tests/crops/Resistor/image0.jpg"
-                comp_num2 = main_function.fun1(path_image_crop)
+
+                if int(results[0].boxes[0].cls) == 0:
+                    path_image_crop = "Testing2/tests/crops/Resistor/image0.jpg"
+                    comp_num2 = main_function.fun1(path_image_crop)
+                else:
+                    shutil.rmtree("Testing2")
+                    img, key = get_image(image)
+                    results = model.predict(img, project='Testing2', name='tests', save=True, save_crop=True)
+                    if int(results[0].boxes[0].cls) == 0:
+                        path_image_crop = "Testing2/tests/crops/Resistor/image0.jpg"
+                        comp_num2 = main_function.fun1(path_image_crop)
+                    else:
+                        comp_num1 == 7
+                        comp_num2 == 7
 
                 # delete Testing2 folder
                 shutil.rmtree("Testing2")
@@ -121,11 +147,11 @@ def get_classification(image, model):
         # elif cv2.waitKey(1) & 0xFF == ord("q"):
         #    break
 
-    return(component_num)
+    return(str(component_num))
 
 def main():
     # load trained YOLO model
-    model = YOLO("train2/weights/best.pt")
+    model = YOLO("runs/detect/train2/weights/best.pt")
 
     # get image from camera
     image = cv2.VideoCapture(0)
@@ -160,7 +186,8 @@ def main():
                 print("Finished sending classifications.")
 
                 # deletes tests folder with cropped image
-                shutil.rmtree("Testing2")
+                if os.path.exists("Testing2"):
+                    shutil.rmtree("Testing2")
 
             # breaks loop if 'q' key is hit
             #elif cv2.waitKey(1) & 0xFF == ord("q"):
