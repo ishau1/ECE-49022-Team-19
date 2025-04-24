@@ -705,6 +705,7 @@ def array_to_band_integer(array1):
     ratio23 = sum23s/length1
     ratio13 = sum13s/length1
 
+
     if ratio012 >= 0.5 and count3s < 2:
         if count2s >= count1s and count2s >= 2:
             return 2
@@ -721,9 +722,10 @@ def array_to_band_integer(array1):
         else:
             return 0
     elif ratio45 >= 0.7 and length1 >= 5:
-        trimmed_array = filter_array1[1:-1]
-        temp1 = int(statistics.median(trimmed_array))
-        return temp1
+        if count4s/(count4s + count5s) >= 0.33:
+            return 4
+        else:
+            return 5
     elif ratio07 >= 0.8 and count7s >= count0s:
         return 7
     elif (ratio23 > 0.75 or ratio13 > 0.75) and count3s >= 2:
