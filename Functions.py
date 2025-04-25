@@ -105,64 +105,62 @@ def color_determ_color_chart_return(red, green, blue, gb_ratio):
 
 #  Function to determine which bin the resistor is to be sent to
 def bin_determ(band_array, ratio1):
-    count5s = band_array.count(5)
-    count3s = band_array.count(3)
-    count8s = band_array.count(8)
-    count6s = band_array.count(6)
-    count7s = band_array.count(7)
-    count2s = band_array.count(2)
-    count1s = band_array.count(1)
-    count0s = band_array.count(0)
-    sum01s = count0s + count1s
-    sum012s = sum01s + count2s
-    sum23s = count2s + count3s
-    sum67s = count6s + count7s
+    count5s = band_array.count(5)  #Counts number of 5s
+    count3s = band_array.count(3)  #Counts number of 3s
+    count8s = band_array.count(8)  #Counts number of 8s
+    count6s = band_array.count(6)  #Counts number of 6s
+    count7s = band_array.count(7)  #Counts number of 7s
+    count2s = band_array.count(2)  #Counts number of 2s
+    count1s = band_array.count(1)  #Counts number of 1s
+    count0s = band_array.count(0)  #Counts number of 0s
+    sum01s = count0s + count1s  #Sum of 0s and 1s
+    sum012s = sum01s + count2s  #Sum of 1s and 2s
+    sum23s = count2s + count3s  #Sum of 2s and 3s
+    sum67s = count6s + count7s  #Sum of 6s and 7s
     if len(band_array) < 3 :  #Checks if array is empty
         return 7  #Integer to let microprocessor know the no bin was determined
-    if band_array[0] == 6 or band_array[0] == 7 or band_array[-1] == 6 or band_array[-1] == 7:  # Send to bin 7
+    if band_array[0] == 6 or band_array[0] == 7 or band_array[-1] in (6, 7):  # Send to bin 7
         return 14
-    if (ratio1 <= 1.2 or ratio1 > 1.65) and count8s == 0:
-        if count5s and ratio1 > 1.65:
+    if (ratio1 <= 1.2 or ratio1 > 1.65) and count8s == 0:  #Checks if bg ratio is really bright or dark
+        if count5s and ratio1 > 1.65:  #Determines bin 9
             return 9
-        elif count2s >= 3 and ratio1 > 2.1:
+        elif count2s >= 3 and ratio1 > 2.1:  #Edge case, only applies for one resistor, determines bin 10
             return 10
-        elif sum23s >= 2 and sum67s == 0 and count5s == 0:
+        elif sum23s >= 2 and sum67s == 0 and count5s == 0:  #Another edge case, determines bin 11
             return 11
         else:
-            return 8
+            return 8  #Determines bin 8
 
 
-    elif band_array[0] == 8 and band_array[1] == 2 or band_array[-1] == 8 and band_array[-2] == 2:  #Send to bin 8
+    elif band_array[0] == 8 and band_array[1] == 2 or band_array[-1] == 8 and band_array[-2] == 2:  #Send to bin 15
         return 15
-    elif count3s == 1 and count2s == 1 and sum012s >= 3:
+    elif count3s == 1 and count2s == 1 and sum012s >= 3: #Edge case, send to bin 10
         return 10
-    elif band_array[0] == 6 and band_array[1] == 8 or band_array[-1] == 6 and band_array[-2] == 8:  #Send to bin 7
+    elif band_array[0] == 6 and band_array[1] == 8 or band_array[-1] == 6 and band_array[-2] == 8:  #Send to bin 14
         return 14
-    elif band_array[0] == 7 and band_array[1] == 8 or band_array[-1] == 7 and band_array[-2] == 8:  #Send to bin 7
+    elif band_array[0] == 7 and band_array[1] == 8 or band_array[-1] == 7 and band_array[-2] == 8:  #Send to bin 14
         return 14
-    elif band_array[0] == 5 and band_array[1] == 6 or band_array[-1] == 5 and band_array[-2] == 6:  #Send to bin 6
+    elif band_array[0] == 5 and band_array[1] == 6 or band_array[-1] == 5 and band_array[-2] == 6:  #Send to bin 13
         return 13
-    elif band_array[0] == 4 and band_array[1] == 7 or band_array[-1] == 4 and band_array[-2] == 7:  #Send to bin 5
+    elif band_array[0] == 4 and band_array[1] == 7 or band_array[-1] == 4 and band_array[-2] == 7:  #Send to bin 12
         return 12
-    elif band_array[0] == 4 and band_array[1] == 6 or band_array[-1] == 4 and band_array[-2] == 6:  #Send to bin 5
+    elif band_array[0] == 4 and band_array[1] == 6 or band_array[-1] == 4 and band_array[-2] == 6:  #Send to bin 12
         return 12
-    elif band_array[0] == 3 and band_array[1] == 3 or band_array[-1] == 3 and band_array[-2] == 3:  #Send to bin 4
+    elif band_array[0] == 3 and band_array[1] == 3 or band_array[-1] == 3 and band_array[-2] == 3:  #Send to bin 11
         return 11
-    elif band_array[0] == 2 and band_array[1] == 2 or band_array[-1] == 2 and band_array[-2] == 2:  #Send to bin 3
+    elif band_array[0] == 2 and band_array[1] == 2 or band_array[-1] == 2 and band_array[-2] == 2:  #Send to bin 10
         return 10
-    elif band_array[0] == 1 and band_array[1] == 5 or band_array[-1] == 1 and band_array[-2] == 5:
+    elif count5s >= 1:  #Send to bin 9
         return 9
-    elif band_array[0] == 2 and band_array[1] == 5 or band_array[-1] == 2 and band_array[-2] == 5:  #Send to bin 2
-        return 9
-    elif band_array[0] == 1 and band_array[1] == 0 and band_array[2] == 0:
+    elif band_array[0] == 1 and band_array[1] == 0 and band_array[2] == 0:  #Send to bin 8
         return 8
-    elif band_array[-1] == 1 and band_array[-2] == 0 and band_array[-3] == 0:
+    elif band_array[-1] == 1 and band_array[-2] == 0 and band_array[-3] == 0:  #Send to bin 8
         return 8
-    elif band_array[0] == 2 and band_array[1] == 0 and band_array[2] == 0:
+    elif band_array[0] == 2 and band_array[1] == 0 and band_array[2] == 0:  #Send to bin 8
         return 8
-    elif band_array[-1] == 2 and band_array[-2] == 0 and band_array[-3] == 0:
+    elif band_array[-1] == 2 and band_array[-2] == 0 and band_array[-3] == 0:  #Send to bin 8
         return 8
-    elif sum01s >= 3:
+    elif sum01s >= 3:  #Edge case send to bin 11
         return 11
     else:
         return 7  #Integer to let microprocessor know the no bin was determined
@@ -692,18 +690,18 @@ def array_to_band_integer(array1):
     if not filter_array1:  #Checks if array is empty
         return -1
 
-    length1 = len(filter_array1)
-    median1 = statistics.median(filter_array1)
-    if math.ceil(median1) == math.floor(median1):
+    length1 = len(filter_array1)  #Length of array with 8s, 12s, and 13s removed
+    median1 = statistics.median(filter_array1)  #Median of array with 8s, 12s, and 13s removed
+    if math.ceil(median1) == math.floor(median1):  #If median is a whole number, it is converted to an int
         median1 = int(median1)
-    mode1 = int(statistics.mode(filter_array1))
-    ratio1 = mode1/length1
-    ratio012 = sum012s/length1
-    ratio45 = sum45s/length1
-    ratio5 = count5s/length1
-    ratio07 = sum07s/length1
-    ratio23 = sum23s/length1
-    ratio13 = sum13s/length1
+    mode1 = int(statistics.mode(filter_array1))  #Determines mode of array without 8s, 12s or 13s
+    ratio1 = mode1/length1  #Ratio of mode to total number of elements in array
+    ratio012 = sum012s/length1  #Ratio of 0s, 1s, and 2s to total number of elements in array
+    ratio45 = sum45s/length1  #Ratio of 4s and 5s to total number of elements in array
+    ratio5 = count5s/length1  #Ratio of 5s to total number of elements in array
+    ratio07 = sum07s/length1  #Ratio of 0s and 7s to total number of elements in array
+    ratio23 = sum23s/length1  #Ratio of 2s and 3s to total number of elements in array
+    ratio13 = sum13s/length1  #Ratio of 1s and 3s to total number of elements in array
 
 
     if ratio012 >= 0.5 and count3s < 2:
@@ -752,7 +750,6 @@ def band_integer_determ1(long_array, short_array):
         # Checks how many background color pixels and white pixels are in array
         if count >= 3:  #If 3 of 4 pixels or more are not background/white pixels
             index2 = 1  #Itteration variable
-            #if (index1 + index2 + 3) < (length1 - 1):
             while (index1 + 3 + index2) < (length1 - 1) and long_array[index1 + 2 + index2] not in (12, 13) \
                     or long_array[index1 + 3 + index2] not in (12, 13) and index2 <= 11:
                 temp_array.append(long_array[index1 + 3 + index2])  #Expands array if next two integers are not white/background colored
