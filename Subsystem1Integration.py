@@ -7,7 +7,7 @@ import shutil
 import serial
 
 # Change this to match your ESP32 port (e.g., COM3 on Windows, /dev/ttyACM0 on Linux)
-SERIAL_PORT = "COM5"
+SERIAL_PORT = "/dev/ttyACM0"
 BAUD_RATE = 115200
 
 def wait_for_ready(ser):
@@ -46,6 +46,19 @@ def get_image(image):
 
     return(img, key)
 
+def check_num_class(model, image, results):
+    num_class = len(results[0].boxes.conf)
+    while num_class != 1:
+        shutil.rmtree("Testing2")
+
+        # gets image
+        result, img = image.read()
+
+        # gets results for image from object detection model
+        results = model.predict(img, project='Testing2', name='tests', save=True, save_crop=True)
+        num_class = len(results[0].boxes.conf)
+    return results
+
 def get_classification(image, model):
     key = 0
 
@@ -58,19 +71,6 @@ def get_classification(image, model):
         path_txt = "Testing2/tests/labels/test.txt"
         results[0].save_txt(path_txt)
 
-        num_class = len(results[0].boxes.conf)
-        while num_class != 1:
-            shutil.rmtree("Testing2")
-            
-            # gets image
-            result, img = image.read()
-
-            # gets results for image from object detection model
-            results = model.predict(img, project='Testing2', name='tests', save=True, save_crop=True)
-            path_txt = "Testing2/tests/labels/test.txt"
-            results[0].save_txt(path_txt)
-            num_class = len(results[0].boxes.conf)
-
         # check if txt file exists, indicating if object is detected if not keep checking until path exists
         while not os.path.exists(path_txt):
             # gets image
@@ -81,12 +81,14 @@ def get_classification(image, model):
             path_txt = "Testing2/tests/labels/test.txt"
             results[0].save_txt(path_txt)
 
+        results = check_num_class(model, image, results)
+
         # get number corresponding to object identified and the confidence
         confidence = results[0].boxes.conf
         component_num = int(results[0].boxes[0].cls)
 
         # checks confidence
-        if confidence[0] <= 0.70:
+        if confidence[0] <= 0.60:
             for i in range(2):
                 # gets second image
                 key = 0
@@ -99,10 +101,12 @@ def get_classification(image, model):
                 results = model.predict(img, project='Testing2', name='tests', save=True, save_crop=True)
 
                 # if confidence is still low, classify component as miscellaneous
-                if confidence[0] <= 0.70:
+                if confidence[0] <= 0.60:
                     component_num = 7
                 else:
                     component_num = int(results[0].boxes[0].cls)
+
+        shutil.rmtree("Testing2")
 
         # if resistor identified pass to resistor identification function
         comp_num1 = 0
@@ -112,13 +116,17 @@ def get_classification(image, model):
                 img, key = get_image(image)
                 results = model.predict(img, project='Testing2', name='tests', save=True, save_crop=True)
 
+                results = check_num_class(model, image, results)
+
                 if int(results[0].boxes[0].cls) == 0:
                     path_image_crop = "Testing2/tests/crops/Resistor/image0.jpg"
                     comp_num1 = main_function.fun1(path_image_crop)
+                    shutil.rmtree("Testing2")
                 else:
                     shutil.rmtree("Testing2")
                     img, key = get_image(image)
                     results = model.predict(img, project='Testing2', name='tests', save=True, save_crop=True)
+                    results = check_num_class(model, image, results)
                     if int(results[0].boxes[0].cls) == 0:
                         path_image_crop = "Testing2/tests/crops/Resistor/image0.jpg"
                         comp_num1 = main_function.fun1(path_image_crop)
@@ -127,10 +135,12 @@ def get_classification(image, model):
                         comp_num2 == 7
 
                 # delete Testing2 folder
-                shutil.rmtree("Testing2")
+                if os.path.exists("Testing2"):
+                    shutil.rmtree("Testing2")
 
                 img, key = get_image(image)
                 results = model.predict(img, project='Testing2', name='tests', save=True, save_crop=True)
+                results = check_num_class(model, image, results)
 
                 if int(results[0].boxes[0].cls) == 0:
                     path_image_crop = "Testing2/tests/crops/Resistor/image0.jpg"
@@ -139,6 +149,8 @@ def get_classification(image, model):
                     shutil.rmtree("Testing2")
                     img, key = get_image(image)
                     results = model.predict(img, project='Testing2', name='tests', save=True, save_crop=True)
+                    results = check_num_class(model, image, results)
+
                     if int(results[0].boxes[0].cls) == 0:
                         path_image_crop = "Testing2/tests/crops/Resistor/image0.jpg"
                         comp_num2 = main_function.fun1(path_image_crop)
@@ -199,8 +211,7 @@ def main():
                 print("Finished sending classifications.")
 
                 # deletes tests folder with cropped image
-                if os.path.exists("Testing2"):
-                    shutil.rmtree("Testing2")
+                shutil.rmtree("Testing2")
 
             # breaks loop if 'q' key is hit
             #elif cv2.waitKey(1) & 0xFF == ord("q"):
