@@ -121,7 +121,7 @@ void setup()
       
     SetInitialPos();                            //Set Initial Position
     // delay(1000);
-    write_Pos(5,5, 40,15, 100,140, 80,80, 0,0); // initialized position -> grasp position
+    write_Pos(5,5, 40,15, 140,140, 80,80, 0,0); // initialized position -> grasp position
     //<======= Robotic Arm Added Code end
 
     Serial.println("Set up Finished");
@@ -220,8 +220,8 @@ void move_arm(int type) {
     switch(type){
       case 1:
         //        Base   Elbow   Arm   Wrist  Gripper
-        write_Pos(5,60, 15,15, 140,110, 80,200, 0,0);  // grasp position -> bin position 1
-        write_Pos_Back(60,5, 15,15, 110,140, 200,80, 0,0);  // bin position 1 -> grasp position
+        write_Pos(5,57, 15,12, 140,110, 80,200, 0,0);  // grasp position -> bin position 1
+        write_Pos_Back(57,5, 12,15, 110,140, 200,80, 0,0);  // bin position 1 -> grasp position
       break;
   
       case 2: 
@@ -254,11 +254,46 @@ void move_arm(int type) {
       break;
 
       case 7:
+      //        Base   Elbow   Arm   Wrist  Gripper --- 1
+      write_Pos(5,50, 15,70, 140,150, 80,200, 0,0);  // grasp position -> bin position 3
+      write_Pos_Back(50,5, 70,15, 150,140, 200,80, 0,0);  // bin position 3 -> grasp position  
+      break;
+
       
-      //        Base   Elbow   Arm   Wrist  Gripper
-      write_Pos(5,50, 15,50, 140,150, 80,200, 0,0);  // grasp position -> bin position 3
-      // write_Pos(130,130, 15,40, 140,160, 80,200, 0,0);  // grasp position -> bin position 3
-      write_Pos_Back(50,5, 50,15, 150,140, 200,80, 0,0);  // bin position 3 -> grasp position  
+      case 8:
+      //        Base   Elbow   Arm   Wrist  Gripper --- 2
+      write_Pos(5,70, 15,55, 140,150, 80,200, 0,0);  // grasp position -> bin position 3
+      write_Pos_Back(70,5, 55,15, 150,140, 200,80, 0,0);  // bin position 3 -> grasp position  
+      break;
+
+      case 9:
+      //        Base   Elbow   Arm   Wrist  Gripper --- 3
+      write_Pos(5,85, 15,55, 140,150, 80,200, 0,0);  // grasp position -> bin position 3
+      write_Pos_Back(85,5, 55,15, 150,140, 200,80, 0,0);  // bin position 3 -> grasp position  
+      break;
+
+      case 10:
+      //        Base   Elbow   Arm   Wrist  Gripper --- 4
+      write_Pos(5,100, 15,80, 140,150, 80,200, 0,0);  // grasp position -> bin position 3
+      write_Pos_Back(100,5, 80,15, 150,140, 200,80, 0,0);  // bin position 3 -> grasp position  
+      break;
+      case 11:
+      //        Base   Elbow   Arm   Wrist  Gripper --- 5
+      write_Pos(5,115, 15,50, 140,150, 80,200, 0,0);  // grasp position -> bin position 3
+      write_Pos_Back(115,5, 50,15, 150,140, 200,80, 0,0);  // bin position 3 -> grasp position  
+      break;
+
+      case 12:
+      //        Base   Elbow   Arm   Wrist  Gripper --- 6
+      write_Pos(5,130, 15,50, 140,150, 80,200, 0,0);  // grasp position -> bin position 3
+      write_Pos_Back(130,5, 50,15, 150,140, 200,80, 0,0);  // bin position 3 -> grasp position  
+      break;
+      
+
+      case 13:  // Test
+      //        Base   Elbow   Arm   Wrist  Gripper --- 6
+      write_Pos(5,180, 15,50, 140,150, 80,200, 0,0);  // grasp position -> bin position 3
+      write_Pos_Back(180,5, 50,15, 150,140, 200,80, 0,0);  // bin position 3 -> grasp position  
       break;
       
       // Set LED Pin output
@@ -311,7 +346,6 @@ void write_Pos(int base_pos_1, int base_pos_2, int elbow_pos_1, int elbow_pos_2,
 
     // Check Base: + counterclock, - lean clockwise
     //  Base same as initial position, goes from 5 degrees to 5 degrees
-
     if (base_pos_1 <= base_pos_2)
     {
         for (pos = base_pos_1; pos <= base_pos_2; pos += 1)
@@ -453,7 +487,7 @@ void SetInitialPos()
     delay(30);
     myservo_elbow.write(40);  //Initial Pos of Elbow is 90 degree
     delay(30);
-    myservo_arm.write(100);   //Initial Pos of Arm is 100 degree
+    myservo_arm.write(140);   //Initial Pos of Arm is 100 degree
     delay(30);
     myservo_wrist.write(80);  //Initial Pos of Wrist is 80 degree
     delay(30);
