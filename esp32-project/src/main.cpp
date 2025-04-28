@@ -33,7 +33,7 @@ Servo myservo_arm;
 Servo myservo_wrist;
 Servo myservo_gripper;
                           
-int servoPin_base  = 8;        // change the pin
+int servoPin_base  = 13;        // change the pin
 int servoPin_elbow = 15;
 int servoPin_arm   = 16;   
 int servoPin_wrist = 17;  
@@ -255,28 +255,30 @@ void move_arm(int type) {
 
       case 7:
       //        Base   Elbow   Arm   Wrist  Gripper --- 1
-      write_Pos(5,50, 15,70, 140,150, 80,200, 0,0);  // grasp position -> bin position 3
-      write_Pos_Back(50,5, 70,15, 150,140, 200,80, 0,0);  // bin position 3 -> grasp position  
+      write_Pos(5,50, 15,50, 140,150, 80,200, 0,0);  // grasp position -> bin position 3
+      // write_Pos(5,50, 15,50, 140,150, 80,200, 0,0);  // grasp position -> bin position 3
+      write_Pos_Back(50,5, 30,15, 150,140, 200,80, 0,0);  // bin position 3 -> grasp position  
       break;
 
       
       case 8:
       //        Base   Elbow   Arm   Wrist  Gripper --- 2
-      write_Pos(5,70, 15,55, 140,150, 80,200, 0,0);  // grasp position -> bin position 3
-      write_Pos_Back(70,5, 55,15, 150,140, 200,80, 0,0);  // bin position 3 -> grasp position  
+      write_Pos(5,68, 15,50, 140,150, 80,200, 0,0);  // grasp position -> bin position 3
+      write_Pos_Back(68,5, 50,15, 150,140, 200,80, 0,0);  // bin position 3 -> grasp position  
       break;
 
       case 9:
       //        Base   Elbow   Arm   Wrist  Gripper --- 3
-      write_Pos(5,85, 15,55, 140,150, 80,200, 0,0);  // grasp position -> bin position 3
-      write_Pos_Back(85,5, 55,15, 150,140, 200,80, 0,0);  // bin position 3 -> grasp position  
+      write_Pos(5,83, 15,50, 140,150, 80,200, 0,0);  // grasp position -> bin position 3
+      write_Pos_Back(83,5, 50,15, 150,140, 200,80, 0,0);  // bin position 3 -> grasp position  
       break;
 
       case 10:
       //        Base   Elbow   Arm   Wrist  Gripper --- 4
-      write_Pos(5,100, 15,80, 140,150, 80,200, 0,0);  // grasp position -> bin position 3
-      write_Pos_Back(100,5, 80,15, 150,140, 200,80, 0,0);  // bin position 3 -> grasp position  
+      write_Pos(5,100, 15,50, 140,150, 80,200, 0,0);  // grasp position -> bin position 3
+      write_Pos_Back(100,5, 50,15, 150,140, 200,80, 0,0);  // bin position 3 -> grasp position  
       break;
+
       case 11:
       //        Base   Elbow   Arm   Wrist  Gripper --- 5
       write_Pos(5,115, 15,50, 140,150, 80,200, 0,0);  // grasp position -> bin position 3
@@ -289,11 +291,10 @@ void move_arm(int type) {
       write_Pos_Back(130,5, 50,15, 150,140, 200,80, 0,0);  // bin position 3 -> grasp position  
       break;
       
-
       case 13:  // Test
       //        Base   Elbow   Arm   Wrist  Gripper --- 6
-      write_Pos(5,180, 15,50, 140,150, 80,200, 0,0);  // grasp position -> bin position 3
-      write_Pos_Back(180,5, 50,15, 150,140, 200,80, 0,0);  // bin position 3 -> grasp position  
+      write_Pos(5,180, 15,30, 140,150, 80,200, 0,0);  // grasp position -> bin position 3
+      write_Pos_Back(180,5, 30,15, 150,140, 200,80, 0,0);  // bin position 3 -> grasp position  
       break;
       
       // Set LED Pin output
