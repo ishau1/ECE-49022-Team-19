@@ -158,6 +158,7 @@ void loop()
         ledcWrite(PWM_CHANNEL_5, 0);
 
         // Classification
+        /*
         if (classification == "1")
         {
             servo1();
@@ -186,7 +187,7 @@ void loop()
         {
             Serial.println("Received 'end' - Stopping processing.");
         }
-
+        */
         // <==== Added Code: Robotic Arm Movement
         int classification_Int = classification.toInt(); // <==  Convert input to INT type
 
