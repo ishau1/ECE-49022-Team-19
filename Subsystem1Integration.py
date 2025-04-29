@@ -61,7 +61,7 @@ def check_num_class(model, image, results):
 
 def get_classification(image, model):
     key = 0
-
+    bin_num = 0
     img, key = get_image(image)
     if key == 1:
         # gets results from model for image
@@ -161,8 +161,20 @@ def get_classification(image, model):
                 # delete Testing2 folder
                 shutil.rmtree("Testing2")
             component_num = comp_num1
+            bin_num = component_num
 
         print(f"The component is a {component_num} with a confidence of {float(confidence[0]) * 100}%")
+
+        if component_num == 1:
+            bin_num = 1
+        elif component_num == 2:
+            bin_num = 2
+        elif component_num == 3 or component_num == 4 or component_num == 5:
+            bin_num = 3
+        elif component_num == 6:
+            bin_num = 4
+        elif component_num == 7:
+            bin_num = 7
 
         # deletes tests folder with cropped image
         if os.path.exists("Testing2"):
@@ -172,11 +184,11 @@ def get_classification(image, model):
         # elif cv2.waitKey(1) & 0xFF == ord("q"):
         #    break
 
-    return(str(component_num))
+    return(str(bin_num))
 
 def main():
     # load trained YOLO model
-    model = YOLO("runs/detect/train2/weights/best.pt")
+    model = YOLO("train2/weights/best.pt")
 
     # get image from camera
     image = cv2.VideoCapture(0)
@@ -193,6 +205,7 @@ def main():
 
     while True:
         component_num = get_classification(image, model)
+
         print(component_num)
         time.sleep(5)
         '''

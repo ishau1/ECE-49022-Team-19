@@ -77,6 +77,8 @@ def color_determ_color_chart_return(red, green, blue, gb_ratio):
     elif green <= (blue - 80) and green > red and green <= 50 and gb_ratio > 2:
         return 7
     #  Determines Gray
+    elif (blue - red) >= 70 and (green - red) >= 70 and gb_ratio <= 1.25:
+        return 12
     elif abs(red - blue) <= 25 and abs(red - green) <= 25 and abs(blue - green) <= 25 and sum1 >= 105 and green >= red:
         # Determines Gray
         return 8
@@ -145,6 +147,8 @@ def bin_determ(band_array, ratio1):
     elif band_array[0] == 4 and band_array[1] == 7 or band_array[-1] == 4 and band_array[-2] == 7:  #Send to bin 12
         return 12
     elif band_array[0] == 4 and band_array[1] == 6 or band_array[-1] == 4 and band_array[-2] == 6:  #Send to bin 12
+        return 12
+    elif band_array[0] == 5 and band_array[1] == 7 or band_array[-1] == 5 and band_array[-2] == 7:  #Send to bin 12
         return 12
     elif band_array[0] == 3 and band_array[1] == 3 or band_array[-1] == 3 and band_array[-2] == 3:  #Send to bin 11
         return 11
@@ -516,20 +520,21 @@ def color_array_line_plotter(slope1, y_int1, x_coord1, y_coord1, x_coord2, y_coo
             # The x-axis value (column) of the first pixel in the line that bisects Resistor
             #color_array2[starter_index1][starter_index2] = 128
             # Assigns the pixel in the line gray value
-            color_array1.append(color_determ_color_chart_return(
-                image_array1[starter_index1][starter_index2][0],
-                image_array1[starter_index1][starter_index2][1],
-                image_array1[starter_index1][starter_index2][2],
-                bg_ratio))
+            if starter_index2 <= max(x_coord1, x_coord2) and starter_index2 >= min(x_coord1, x_coord2):
+                color_array1.append(color_determ_color_chart_return(
+                    image_array1[starter_index1][starter_index2][0],
+                    image_array1[starter_index1][starter_index2][1],
+                    image_array1[starter_index1][starter_index2][2],
+                    bg_ratio))
 
-            #if color_array1[-1] == 11 or color_array1[-1] == 8 or color_array1[-1] == 2 or color_array1[-1] == 1 or color_array1[-1] == 6:
-            pixel_glare_color_determ(starter_index2, starter_index1, slope1, orientation3, color_array1,
+                #if color_array1[-1] == 11 or color_array1[-1] == 8 or color_array1[-1] == 2 or color_array1[-1] == 1 or color_array1[-1] == 6:
+                pixel_glare_color_determ(starter_index2, starter_index1, slope1, orientation3, color_array1,
                                               image_array1, 8, dimensions1[0], dimensions1[1], color_array1[-1], bg_ratio)
 
             # Function that adds the pixels color determined by RGB to an array
-            image_array1[starter_index1][starter_index2][1] = 255  #Assigns the pixel in the line green value
-            if starter_index1 == y_coord1:
-                image_array1[starter_index1][starter_index2][0] = 255
+            #image_array1[starter_index1][starter_index2][1] = 255  #Assigns the pixel in the line green value
+            #if starter_index1 == y_coord1:
+            #    image_array1[starter_index1][starter_index2][0] = 255
 
 
             starter_index1 += 1  #Increases increment by 1
@@ -540,20 +545,21 @@ def color_array_line_plotter(slope1, y_int1, x_coord1, y_coord1, x_coord2, y_coo
             # The y-axis value (row) of the first pixel in the line that bisects Resistor
             #color_array2[starter_index2][starter_index1] = 128
             # Assigns the pixel in the line gray value
-            color_array1.append(color_determ_color_chart_return(
-                image_array1[starter_index2][starter_index1][0],
-                image_array1[starter_index2][starter_index1][1],
-                image_array1[starter_index2][starter_index1][2],
-                bg_ratio))
+            if starter_index2 <= max(y_coord1, y_coord2) and starter_index2 >= min(y_coord1, y_coord2):
+                color_array1.append(color_determ_color_chart_return(
+                    image_array1[starter_index2][starter_index1][0],
+                    image_array1[starter_index2][starter_index1][1],
+                    image_array1[starter_index2][starter_index1][2],
+                    bg_ratio))
 
-            #if color_array1[-1] == 11 or color_array1[-1] == 8 or color_array1[-1] == 2 or color_array1[-1] == 1 or color_array1[-1] == 6:
-            pixel_glare_color_determ(starter_index1, starter_index2, slope1, orientation3, color_array1,
+                #if color_array1[-1] == 11 or color_array1[-1] == 8 or color_array1[-1] == 2 or color_array1[-1] == 1 or color_array1[-1] == 6:
+                pixel_glare_color_determ(starter_index1, starter_index2, slope1, orientation3, color_array1,
                                               image_array1, 8, dimensions1[0], dimensions1[1], color_array1[-1], bg_ratio)
 
             # Function that adds the pixels color determined by RGB to an array
-            image_array1[starter_index2][starter_index1][1] = 255  #Assigns the pixel in the line green value
-            if starter_index1 == x_coord1:
-                image_array1[starter_index2][starter_index1][0] = 255
+            #image_array1[starter_index2][starter_index1][1] = 255  #Assigns the pixel in the line green value
+            #if starter_index1 == x_coord1:
+            #    image_array1[starter_index2][starter_index1][0] = 255
             starter_index1 += 1  #Increases increment by 1
     return None
 
@@ -750,8 +756,8 @@ def band_integer_determ1(long_array, short_array):
         # Checks how many background color pixels and white pixels are in array
         if count >= 3:  #If 3 of 4 pixels or more are not background/white pixels
             index2 = 1  #Itteration variable
-            while (index1 + 3 + index2) < (length1 - 1) and long_array[index1 + 2 + index2] not in (12, 13) \
-                    or long_array[index1 + 3 + index2] not in (12, 13) and index2 <= 11:
+            while (index1 + 3 + index2) < (length1 - 1) and (long_array[index1 + 2 + index2] not in (12, 13)
+                    or long_array[index1 + 3 + index2] not in (12, 13)) and index2 <= 11:
                 temp_array.append(long_array[index1 + 3 + index2])  #Expands array if next two integers are not white/background colored
                 index2 += 1  #Increments
 
