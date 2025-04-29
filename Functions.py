@@ -122,7 +122,7 @@ def bin_determ(band_array, ratio1):
     if len(band_array) < 3 :  #Checks if array is empty
         return 7  #Integer to let microprocessor know the no bin was determined
     if band_array[0] == 6 or band_array[0] == 7 or band_array[-1] in (6, 7):  # Send to bin 7
-        return 14
+        return 5
     if (ratio1 <= 1.2 or ratio1 > 1.65) and count8s == 0:  #Checks if bg ratio is really bright or dark
         if count5s and ratio1 > 1.65:  #Determines bin 9
             return 9
@@ -135,13 +135,13 @@ def bin_determ(band_array, ratio1):
 
 
     elif band_array[0] == 8 and band_array[1] == 2 or band_array[-1] == 8 and band_array[-2] == 2:  #Send to bin 15
-        return 15
+        return 6
     elif count3s == 1 and count2s == 1 and sum012s >= 3: #Edge case, send to bin 10
         return 10
     elif band_array[0] == 6 and band_array[1] == 8 or band_array[-1] == 6 and band_array[-2] == 8:  #Send to bin 14
-        return 14
+        return 5
     elif band_array[0] == 7 and band_array[1] == 8 or band_array[-1] == 7 and band_array[-2] == 8:  #Send to bin 14
-        return 14
+        return 5
     elif band_array[0] == 5 and band_array[1] == 6 or band_array[-1] == 5 and band_array[-2] == 6:  #Send to bin 13
         return 13
     elif band_array[0] == 4 and band_array[1] == 7 or band_array[-1] == 4 and band_array[-2] == 7:  #Send to bin 12
@@ -532,9 +532,9 @@ def color_array_line_plotter(slope1, y_int1, x_coord1, y_coord1, x_coord2, y_coo
                                               image_array1, 8, dimensions1[0], dimensions1[1], color_array1[-1], bg_ratio)
 
             # Function that adds the pixels color determined by RGB to an array
-            #image_array1[starter_index1][starter_index2][1] = 255  #Assigns the pixel in the line green value
-            #if starter_index1 == y_coord1:
-            #    image_array1[starter_index1][starter_index2][0] = 255
+            image_array1[starter_index1][starter_index2][1] = 255  #Assigns the pixel in the line green value
+            if starter_index1 == y_coord1:
+                image_array1[starter_index1][starter_index2][0] = 255
 
 
             starter_index1 += 1  #Increases increment by 1
@@ -557,9 +557,9 @@ def color_array_line_plotter(slope1, y_int1, x_coord1, y_coord1, x_coord2, y_coo
                                               image_array1, 8, dimensions1[0], dimensions1[1], color_array1[-1], bg_ratio)
 
             # Function that adds the pixels color determined by RGB to an array
-            #image_array1[starter_index2][starter_index1][1] = 255  #Assigns the pixel in the line green value
-            #if starter_index1 == x_coord1:
-            #    image_array1[starter_index2][starter_index1][0] = 255
+            image_array1[starter_index2][starter_index1][1] = 255  #Assigns the pixel in the line green value
+            if starter_index1 == x_coord1:
+                image_array1[starter_index2][starter_index1][0] = 255
             starter_index1 += 1  #Increases increment by 1
     return None
 
