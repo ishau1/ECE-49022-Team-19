@@ -220,9 +220,10 @@ void move_arm(int type) {
     switch(type){
       case 1:
         //        Base   Elbow   Arm   Wrist  Gripper
-        write_Pos(5,57, 15,12, 140,110, 80,200, 0,0);  // grasp position -> bin position 1
-        write_Pos_Back(57,5, 12,15, 110,140, 200,80, 0,0);  // bin position 1 -> grasp position
-      break;
+        write_Pos(5,55, 15,12, 140,110, 80,200, 0,0);  // grasp position -> bin position 1
+        write_Pos_Back(55,5, 12,15, 110,140, 200,80, 0,0);  // bin position 1 -> grasp position
+        // Serial.print("");
+        break;
   
       case 2: 
       //        Base   Elbow   Arm   Wrist  Gripper  
@@ -253,11 +254,11 @@ void move_arm(int type) {
       write_Pos_Back(125,5, 15,15, 110,140, 200,80, 0,0);  // bin position 3 -> grasp position  
       break;
 
-      case 7:
+      case 13:
       //        Base   Elbow   Arm   Wrist  Gripper --- 1
       write_Pos(5,50, 15,50, 140,150, 80,200, 0,0);  // grasp position -> bin position 3
       // write_Pos(5,50, 15,50, 140,150, 80,200, 0,0);  // grasp position -> bin position 3
-      write_Pos_Back(50,5, 30,15, 150,140, 200,80, 0,0);  // bin position 3 -> grasp position  
+      write_Pos_Back(50,5, 50,15, 150,140, 200,80, 0,0);  // bin position 3 -> grasp position  
       break;
 
       
@@ -291,7 +292,7 @@ void move_arm(int type) {
       write_Pos_Back(130,5, 50,15, 150,140, 200,80, 0,0);  // bin position 3 -> grasp position  
       break;
       
-      case 13:  // Test
+      case 7:  // Test
       //        Base   Elbow   Arm   Wrist  Gripper --- 6
       write_Pos(5,180, 15,30, 140,150, 80,200, 0,0);  // grasp position -> bin position 3
       write_Pos_Back(180,5, 30,15, 150,140, 200,80, 0,0);  // bin position 3 -> grasp position  
