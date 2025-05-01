@@ -135,13 +135,13 @@ def bin_determ(band_array, ratio1):
 
 
     elif band_array[0] == 8 and band_array[1] == 2 or band_array[-1] == 8 and band_array[-2] == 2:  #Send to bin 15
-        return 6
+        return 15
     elif count3s == 1 and count2s == 1 and sum012s >= 3: #Edge case, send to bin 10
         return 10
     elif band_array[0] == 6 and band_array[1] == 8 or band_array[-1] == 6 and band_array[-2] == 8:  #Send to bin 14
-        return 5
+        return 14
     elif band_array[0] == 7 and band_array[1] == 8 or band_array[-1] == 7 and band_array[-2] == 8:  #Send to bin 14
-        return 5
+        return 14
     elif band_array[0] == 5 and band_array[1] == 6 or band_array[-1] == 5 and band_array[-2] == 6:  #Send to bin 13
         return 13
     elif band_array[0] == 4 and band_array[1] == 7 or band_array[-1] == 4 and band_array[-2] == 7:  #Send to bin 12
@@ -164,8 +164,8 @@ def bin_determ(band_array, ratio1):
         return 8
     elif band_array[-1] == 2 and band_array[-2] == 0 and band_array[-3] == 0:  #Send to bin 8
         return 8
-    elif sum01s >= 3:  #Edge case send to bin 11
-        return 11
+    #elif sum01s >= 3:  #Edge case send to bin 11
+    #    return 11
     else:
         return 7  #Integer to let microprocessor know the no bin was determined
 
