@@ -122,7 +122,7 @@ def bin_determ(band_array, ratio1):
     if len(band_array) < 3 :  #Checks if array is empty
         return 7  #Integer to let microprocessor know the no bin was determined
     if band_array[0] == 6 or band_array[0] == 7 or band_array[-1] in (6, 7):  # Send to bin 7
-        return 5
+        return 14
     if (ratio1 <= 1.2 or ratio1 > 1.65) and count8s == 0:  #Checks if bg ratio is really bright or dark
         if count5s and ratio1 > 1.65:  #Determines bin 9
             return 9
