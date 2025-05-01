@@ -204,11 +204,11 @@ void loop()
         }
 
         // 1-second delay to model robotic arm movement
-        delay(100);
+        delay(2000);
         // <==== Added Code End: Robotic Arm Movement 
 
         // Send "READY" to receive next classification
-        Serial.println("READY");
+        // Serial.println("READY");
     }
 }
 

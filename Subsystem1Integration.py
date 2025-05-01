@@ -7,7 +7,7 @@ import shutil
 import serial
 
 # Change this to match your ESP32 port (e.g., COM3 on Windows, /dev/ttyACM0 on Linux)
-SERIAL_PORT = "/dev/ttyACM0"
+SERIAL_PORT = "COM7"
 BAUD_RATE = 115200
 
 def wait_for_ready(ser):
@@ -89,7 +89,7 @@ def get_classification(image, model):
 
         # checks confidence
         if confidence[0] <= 0.60:
-            for i in range(2):
+            for i in range(3):
                 # gets second image
                 key = 0
                 img, key = get_image(image)
@@ -175,6 +175,10 @@ def get_classification(image, model):
             bin_num = 4
         elif component_num == 7:
             bin_num = 7
+        elif component_num == 14:
+            bin_num = 5
+        elif component_num == 15:
+            bin_num = 6
 
         # deletes tests folder with cropped image
         if os.path.exists("Testing2"):
@@ -188,7 +192,7 @@ def get_classification(image, model):
 
 def main():
     # load trained YOLO model
-    model = YOLO("train2/weights/best.pt")
+    model = YOLO("train4/weights/best.pt")
 
     # get image from camera
     image = cv2.VideoCapture(0)
@@ -203,35 +207,42 @@ def main():
     if not image.isOpened():
         print("Error1")
 
+    ser = serial.Serial(SERIAL_PORT, BAUD_RATE, timeout=1)
+    ser.setDTR(False)
+    ser.setRTS(False)
+
     while True:
-        component_num = get_classification(image, model)
+        #component_num = get_classification(image, model)
 
-        print(component_num)
-        time.sleep(5)
-        '''
+        # print(component_num)
+        # time.sleep(5)
+        
         try:
-            with serial.Serial(SERIAL_PORT, BAUD_RATE, timeout=1) as ser:
-                print("Waiting for ESP32 to be ready...")
-                wait_for_ready(ser)
+            #with serial.Serial(SERIAL_PORT, BAUD_RATE, timeout=1) as ser:
+            print("Waiting for ESP32 to be ready...")
+            wait_for_ready(ser)
 
-                component_num = get_classification(image, model)
+            component_num = get_classification(image, model)
 
-                send_data(ser, component_num)
-                wait_for_ready(ser)
+            send_data(ser, component_num)
+            #wait_for_ready(ser)
 
-                # End signal
-                send_data(ser, "end")
-                print("Finished sending classifications.")
+            # End signal
+            #send_data(ser, "end")
+            #print("Finished sending classifications.")
 
-                # deletes tests folder with cropped image
+            # deletes tests folder with cropped image
+            if os.path.exists("Testing2"):
                 shutil.rmtree("Testing2")
 
             # breaks loop if 'q' key is hit
             #elif cv2.waitKey(1) & 0xFF == ord("q"):
             #    break
+            #wait_for_ready(ser)
+            time.sleep(12)
         except serial.SerialException as e:
             print(f"Serial error: {e}")
-        '''
+        
     image.release()
 
 if __name__ == "__main__":

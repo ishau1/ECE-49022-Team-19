@@ -3,7 +3,7 @@ import cv2
 import time
 
 # load trained YOLO model
-model = YOLO("runs/detect/train2/weights/best.pt")
+model = YOLO("train4/weights/best.pt")
 
 # get image from camera
 image = cv2.VideoCapture(0)
