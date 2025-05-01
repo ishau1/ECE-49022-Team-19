@@ -726,7 +726,7 @@ def array_to_band_integer(array1):
         else:
             return 0
     elif ratio45 >= 0.7 and length1 >= 5:
-        if count4s/(count4s + count5s) >= 0.33:
+        if count4s/(count4s + count5s) >= 0.42:
             return 4
         else:
             return 5
